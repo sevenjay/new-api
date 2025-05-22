@@ -16,6 +16,7 @@ import EditChannel from './pages/Channel/EditChannel';
 import Redemption from './pages/Redemption';
 import TopUp from './pages/TopUp';
 import Log from './pages/Log';
+import PublicLog from './pages/PublicLog';
 import Chat from './pages/Chat';
 import Chat2Link from './pages/Chat2Link';
 import { Layout } from '@douyinfe/semi-ui';
@@ -263,6 +264,14 @@ function App() {
           element={
             <Suspense fallback={<Loading></Loading>} key={location.pathname}>
               <About />
+            </Suspense>
+          }
+        />
+        <Route
+          path='/public_logs'
+          element={
+            <Suspense fallback={<Loading></Loading>} key={location.pathname}>
+              <PublicLog />
             </Suspense>
           }
         />

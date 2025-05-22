@@ -74,7 +74,7 @@ const colors = [
   'yellow',
 ];
 
-const LogsTable = () => {
+const LogsTable = ({ isPublic = false }) => {
   const { t } = useTranslation();
 
   function renderType(type) {
@@ -749,7 +749,7 @@ const LogsTable = () => {
   const [logCount, setLogCount] = useState(ITEMS_PER_PAGE);
   const [pageSize, setPageSize] = useState(ITEMS_PER_PAGE);
   const [logType, setLogType] = useState(0);
-  const isAdminUser = isAdmin();
+  const isAdminUser = isPublic ? false : isAdmin();
   let now = new Date();
   // 初始化start_timestamp为今天0点
   const [inputs, setInputs] = useState({
@@ -794,6 +794,20 @@ const LogsTable = () => {
     }
   };
 
+  const getPublicLogStat = async () => {
+    let localStartTimestamp = Date.parse(start_timestamp) / 1000;
+    let localEndTimestamp = Date.parse(end_timestamp) / 1000;
+    let url = `/api/log/public_stat?type=${logType}&token_name=${token_name}&model_name=${model_name}&start_timestamp=${localStartTimestamp}&end_timestamp=${localEndTimestamp}&group=${group}`;
+    url = encodeURI(url);
+    let res = await API.get(url);
+    const { success, message, data } = res.data;
+    if (success) {
+      setStat(data);
+    } else {
+      showError(message);
+    }
+  };
+
   const getLogStat = async () => {
     let localStartTimestamp = Date.parse(start_timestamp) / 1000;
     let localEndTimestamp = Date.parse(end_timestamp) / 1000;
@@ -813,7 +827,9 @@ const LogsTable = () => {
       return;
     }
     setLoadingStat(true);
-    if (isAdminUser) {
+    if (isPublic) {
+      await getPublicLogStat();
+    } else if (isAdminUser) {
       await getLogStat();
     } else {
       await getLogSelfStat();
@@ -1033,7 +1049,9 @@ const LogsTable = () => {
     let url = '';
     let localStartTimestamp = Date.parse(start_timestamp) / 1000;
     let localEndTimestamp = Date.parse(end_timestamp) / 1000;
-    if (isAdminUser) {
+    if (isPublic) {
+      url = `/api/log/public/?p=${startIdx}&page_size=${pageSize}&type=${logType}&token_name=${token_name}&model_name=${model_name}&start_timestamp=${localStartTimestamp}&end_timestamp=${localEndTimestamp}&group=${group}`;
+    } else if (isAdminUser) {
       url = `/api/log/?p=${startIdx}&page_size=${pageSize}&type=${logType}&username=${username}&token_name=${token_name}&model_name=${model_name}&start_timestamp=${localStartTimestamp}&end_timestamp=${localEndTimestamp}&channel=${channel}&group=${group}`;
     } else {
       url = `/api/log/self/?p=${startIdx}&page_size=${pageSize}&type=${logType}&token_name=${token_name}&model_name=${model_name}&start_timestamp=${localStartTimestamp}&end_timestamp=${localEndTimestamp}&group=${group}`;
