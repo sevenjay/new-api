@@ -1107,13 +1107,15 @@ const LogsTable = ({ isPublic = false }) => {
     const localPageSize =
       parseInt(localStorage.getItem('page-size')) || ITEMS_PER_PAGE;
     setPageSize(localPageSize);
-    loadLogs(activePage, localPageSize)
-      .then()
-      .catch((reason) => {
-        showError(reason);
-      });
-    handleEyeClick();
-  }, []);
+    if (!isPublic) {
+      loadLogs(activePage, localPageSize)
+        .then()
+        .catch((reason) => {
+          showError(reason);
+        });
+      handleEyeClick();
+    }
+  }, [isPublic]);
 
   const expandRowRender = (record, index) => {
     return <Descriptions data={expandData[record.key]} />;
