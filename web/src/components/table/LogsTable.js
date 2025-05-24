@@ -1194,12 +1194,15 @@ const LogsTable = ({ isPublic = false }) => {
     const localPageSize =
       parseInt(localStorage.getItem('page-size')) || ITEMS_PER_PAGE;
     setPageSize(localPageSize);
-    loadLogs(activePage, localPageSize)
-      .then()
-      .catch((reason) => {
-        showError(reason);
-      });
-  }, []);
+    if (!isPublic) {
+      loadLogs(activePage, localPageSize)
+        .then()
+        .catch((reason) => {
+          showError(reason);
+        });
+      handleEyeClick();
+    }
+  }, [isPublic]);
 
   // 当 formApi 可用时，初始化统计
   useEffect(() => {
