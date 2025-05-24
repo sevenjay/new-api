@@ -11,6 +11,7 @@ import {
   isAdmin,
   isMobile,
   showError,
+  authHeader,
 } from '../helpers';
 import '../index.css';
 
@@ -108,6 +109,13 @@ const SiderBar = () => {
   const setTheme = useSetTheme();
   const location = useLocation();
   const [routerMapState, setRouterMapState] = useState(routerMap);
+
+  // Add a condition to check if the user is logged in and the current path
+  const isLoggedIn = Object.keys(authHeader()).length !== 0;
+  const currentPath = location.pathname;
+  if (!isLoggedIn && (currentPath === '/public_logs' || currentPath === '/pricing')) {
+    return null;
+  }
 
   // 预先计算所有可能的图标样式
   const allItemKeys = useMemo(() => {
