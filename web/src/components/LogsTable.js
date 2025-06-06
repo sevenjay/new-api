@@ -774,6 +774,8 @@ const LogsTable = ({ isPublic = false }) => {
   const [stat, setStat] = useState({
     quota: 0,
     token: 0,
+    remain_quota: 0,
+    unlimited_quota: false,
   });
 
   const handleInputChange = (value, name) => {
@@ -1139,6 +1141,20 @@ const LogsTable = ({ isPublic = false }) => {
                 }}
               >
                 {t('消耗额度')}: {renderQuota(stat.quota)}
+              </Tag>
+              <Tag
+                color='green'
+                size='large'
+                style={{
+                  padding: 15,
+                  borderRadius: '8px',
+                  fontWeight: 500,
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                }}
+              >
+                {stat.unlimited_quota
+                  ? `${t('剩余额度')}: ${t('无限制')}`
+                  : `${t('剩余额度')}: ${renderQuota(stat.remain_quota)}`}
               </Tag>
               <Tag
                 color='pink'
