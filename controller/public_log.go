@@ -61,9 +61,11 @@ func GetPublicLogStat(c *gin.Context) {
 		"success": true,
 		"message": "",
 		"data": gin.H{
-			"quota": stat.Quota,
-			"rpm":   stat.Rpm,
-			"tpm":   stat.Tpm,
+			"quota":           stat.Quota,
+			"rpm":             stat.Rpm,
+			"tpm":             stat.Tpm,
+			"remain_quota":    stat.RemainQuota,
+			"unlimited_quota": stat.UnlimitedQuota,
 		},
 	})
 }
