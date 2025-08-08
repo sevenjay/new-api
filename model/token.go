@@ -165,6 +165,26 @@ func GetTokenByKey(key string, fromDB bool) (token *Token, err error) {
 	return token, err
 }
 
+func GetTokenByName(name string) (*Token, error) {
+	if name == "" {
+		return nil, errors.New("name 为空！")
+	}
+	var token Token
+	err := DB.Where("name = ?", name).First(&token).Error
+	if err != nil {
+		return nil, err
+	}
+	// Update Redis cache asynchronously on successful DB read
+	if common.RedisEnabled {
+		gopool.Go(func() {
+			if errCache := cacheSetToken(token); errCache != nil {
+				common.SysError("failed to update token cache by name: " + errCache.Error())
+			}
+		})
+	}
+	return &token, nil
+}
+
 func (token *Token) Insert() error {
 	var err error
 	err = DB.Create(token).Error
