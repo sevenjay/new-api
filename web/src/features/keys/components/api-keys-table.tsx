@@ -20,7 +20,7 @@ import { useQuery } from '@tanstack/react-query'
 import { getRouteApi } from '@tanstack/react-router'
 import type { Table as TanstackTable } from '@tanstack/react-table'
 import { Database } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
@@ -43,6 +43,7 @@ import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useTableUrlState } from '@/hooks/use-table-url-state'
 import { formatQuota } from '@/lib/format'
+import { getUserGroups } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 import { getApiKeys, searchApiKeys } from '../api'
@@ -191,6 +192,19 @@ export function ApiKeysTable() {
   const { refreshTrigger } = useApiKeys()
   const [now, setNow] = useState(() => Date.now())
   const columns = useApiKeysColumns(now)
+  const { data: groupsResponse } = useQuery({
+    queryKey: ['user-groups'],
+    queryFn: getUserGroups,
+    staleTime: 0,
+  })
+  const groupOptions = useMemo(
+    () =>
+      Object.keys(groupsResponse?.data || {}).map((group) => ({
+        label: group,
+        value: group,
+      })),
+    [groupsResponse]
+  )
 
   useEffect(() => {
     const intervalId = window.setInterval(() => {
@@ -216,6 +230,7 @@ export function ApiKeysTable() {
     columnFilters: [
       { columnId: 'status', searchKey: 'status', type: 'array' },
       { columnId: '_tokenSearch', searchKey: 'token', type: 'string' },
+      { columnId: 'group', searchKey: 'group', type: 'array' },
     ],
   })
 
@@ -228,7 +243,15 @@ export function ApiKeysTable() {
     columnId: '_tokenSearch',
     onColumnFiltersChange,
   })
-  const shouldSearch = Boolean(globalFilter?.trim() || tokenFilter.trim())
+  const groupFilterValue = columnFilters.find(
+    (filter) => filter.id === 'group'
+  )?.value
+  const groupFilter = Array.isArray(groupFilterValue)
+    ? String(groupFilterValue[0] || '')
+    : ''
+  const shouldSearch = Boolean(
+    globalFilter?.trim() || tokenFilter.trim() || groupFilter
+  )
 
   // Fetch data with React Query
   // eslint-disable-next-line @tanstack/query/exhaustive-deps
@@ -239,6 +262,7 @@ export function ApiKeysTable() {
       pagination.pageSize,
       globalFilter,
       tokenFilter,
+      groupFilter,
       refreshTrigger,
     ],
     queryFn: async () => {
@@ -246,6 +270,7 @@ export function ApiKeysTable() {
         ? await searchApiKeys({
             keyword: globalFilter,
             token: tokenFilter,
+            group: groupFilter,
             p: pagination.pageIndex + 1,
             size: pagination.pageSize,
           })
@@ -322,6 +347,12 @@ export function ApiKeysTable() {
             columnId: 'status',
             title: t('Status'),
             options: API_KEY_STATUS_OPTIONS,
+            singleSelect: true,
+          },
+          {
+            columnId: 'group',
+            title: t('Group'),
+            options: groupOptions,
             singleSelect: true,
           },
         ],
