@@ -466,7 +466,9 @@ it('keeps full mobile information without group or quota section headings', asyn
     expect(screen.getByText(zh.translation['Last Used'])).toBeInTheDocument()
     expect(screen.getByText(zh.translation['Expires'])).toBeInTheDocument()
     expect(
-      screen.queryByText(zh.translation['Group'], { exact: true })
+      screen.queryByRole('heading', {
+        name: zh.translation['Group'],
+      })
     ).not.toBeInTheDocument()
     expect(screen.getByText('default')).toBeInTheDocument()
     expect(screen.getByText('1x')).toBeInTheDocument()

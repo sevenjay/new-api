@@ -42,6 +42,7 @@ const defaults = {
   AutoGroups: '["default","vip"]',
   MaxTokenAutoGroups: 5,
   DefaultUseAutoGroup: false,
+  SkipTokenGroupUsableCheckEnabled: false,
   GroupSpecialUsableGroup: '{}',
 }
 
@@ -53,6 +54,7 @@ const schema = z.object({
   AutoGroups: z.string(),
   MaxTokenAutoGroups: positiveIntegerSchema('Enter a positive integer'),
   DefaultUseAutoGroup: z.boolean(),
+  SkipTokenGroupUsableCheckEnabled: z.boolean(),
   GroupSpecialUsableGroup: z.string(),
 })
 

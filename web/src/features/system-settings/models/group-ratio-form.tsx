@@ -73,6 +73,7 @@ type GroupFormValues = {
   AutoGroups: string
   MaxTokenAutoGroups: number
   DefaultUseAutoGroup: boolean
+  SkipTokenGroupUsableCheckEnabled: boolean
   GroupSpecialUsableGroup: string
 }
 
@@ -436,6 +437,30 @@ export const GroupRatioForm = memo(function GroupRatioForm({
             />
           </SettingsForm>
         )}
+        <FormField
+          control={form.control}
+          name='SkipTokenGroupUsableCheckEnabled'
+          render={({ field }) => (
+            <SettingsSwitchItem>
+              <SettingsSwitchContent>
+                <FormLabel>
+                  {t('Skip token group usability validation')}
+                </FormLabel>
+                <FormDescription>
+                  {t(
+                    "Allow API keys to use their bound group without checking the user's usable groups or the current group ratio configuration."
+                  )}
+                </FormDescription>
+              </SettingsSwitchContent>
+              <FormControl>
+                <Switch
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+            </SettingsSwitchItem>
+          )}
+        />
       </Form>
     </div>
   )

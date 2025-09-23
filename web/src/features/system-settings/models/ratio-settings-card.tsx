@@ -144,6 +144,7 @@ const createGroupSchema = (t: Translate) =>
     }),
     MaxTokenAutoGroups: positiveIntegerSchema(t('Enter a positive integer')),
     DefaultUseAutoGroup: z.boolean(),
+    SkipTokenGroupUsableCheckEnabled: z.boolean(),
     GroupSpecialUsableGroup: createJsonStringField(t),
   })
 
@@ -249,6 +250,8 @@ export function RatioSettingsCard({
     AutoGroups: normalizeJsonString(groupDefaults.AutoGroups),
     MaxTokenAutoGroups: groupDefaults.MaxTokenAutoGroups,
     DefaultUseAutoGroup: groupDefaults.DefaultUseAutoGroup,
+    SkipTokenGroupUsableCheckEnabled:
+      groupDefaults.SkipTokenGroupUsableCheckEnabled,
     GroupSpecialUsableGroup: normalizeJsonString(
       groupDefaults.GroupSpecialUsableGroup
     ),
@@ -339,6 +342,8 @@ export function RatioSettingsCard({
       AutoGroups: normalizeJsonString(groupDefaults.AutoGroups),
       MaxTokenAutoGroups: groupDefaults.MaxTokenAutoGroups,
       DefaultUseAutoGroup: groupDefaults.DefaultUseAutoGroup,
+      SkipTokenGroupUsableCheckEnabled:
+        groupDefaults.SkipTokenGroupUsableCheckEnabled,
       GroupSpecialUsableGroup: normalizeJsonString(
         groupDefaults.GroupSpecialUsableGroup
       ),
@@ -417,6 +422,8 @@ export function RatioSettingsCard({
         AutoGroups: normalizeJsonString(values.AutoGroups),
         MaxTokenAutoGroups: values.MaxTokenAutoGroups,
         DefaultUseAutoGroup: values.DefaultUseAutoGroup,
+        SkipTokenGroupUsableCheckEnabled:
+          values.SkipTokenGroupUsableCheckEnabled,
         GroupSpecialUsableGroup: normalizeJsonString(
           values.GroupSpecialUsableGroup
         ),
