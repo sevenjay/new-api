@@ -38,6 +38,7 @@ export default function GroupRatioSettings(props) {
     GroupGroupRatio: '',
     AutoGroups: '',
     DefaultUseAutoGroup: false,
+    SkipTokenGroupUsableCheckEnabled: false,
   });
   const refForm = useRef();
   const [inputsRow, setInputsRow] = useState(inputs);
@@ -102,6 +103,12 @@ export default function GroupRatioSettings(props) {
       if (Object.keys(inputs).includes(key)) {
         currentInputs[key] = props.options[key];
       }
+    }
+    if (
+      currentInputs.SkipTokenGroupUsableCheckEnabled === undefined ||
+      currentInputs.SkipTokenGroupUsableCheckEnabled === null
+    ) {
+      currentInputs.SkipTokenGroupUsableCheckEnabled = false;
     }
     setInputs(currentInputs);
     setInputsRow(structuredClone(currentInputs));
@@ -232,6 +239,25 @@ export default function GroupRatioSettings(props) {
               field={'DefaultUseAutoGroup'}
               onChange={(value) =>
                 setInputs({ ...inputs, DefaultUseAutoGroup: value })
+              }
+            />
+          </Col>
+        </Row>
+        <Row gutter={16}>
+          <Col span={16}>
+            <Form.Switch
+              label={t(
+                '不检查令牌绑定分组是否存在用户可用分组表中',
+              )}
+              extraText={t(
+                '启用后，请确保分组配置正确，否则可能导致令牌绑定的分组不可用时仍继续使用',
+              )}
+              field={'SkipTokenGroupUsableCheckEnabled'}
+              onChange={(value) =>
+                setInputs({
+                  ...inputs,
+                  SkipTokenGroupUsableCheckEnabled: value,
+                })
               }
             />
           </Col>
