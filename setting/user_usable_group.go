@@ -3,6 +3,7 @@ package setting
 import (
 	"encoding/json"
 	"sync"
+	"sync/atomic"
 
 	"github.com/QuantumNous/new-api/common"
 )
@@ -12,6 +13,7 @@ var userUsableGroups = map[string]string{
 	"vip":     "vip分组",
 }
 var userUsableGroupsMutex sync.RWMutex
+var skipTokenGroupUsableCheckEnabled atomic.Bool
 
 func GetUserUsableGroupsCopy() map[string]string {
 	userUsableGroupsMutex.RLock()
@@ -51,4 +53,12 @@ func GetUsableGroupDescription(groupName string) string {
 		return desc
 	}
 	return groupName
+}
+
+func SetSkipTokenGroupUsableCheckEnabled(enabled bool) {
+	skipTokenGroupUsableCheckEnabled.Store(enabled)
+}
+
+func IsSkipTokenGroupUsableCheckEnabled() bool {
+	return skipTokenGroupUsableCheckEnabled.Load()
 }
