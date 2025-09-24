@@ -2,6 +2,7 @@ package model
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"one-api/common"
 	"one-api/logger"
@@ -312,12 +313,17 @@ func SearchUserLogs(userId int, keyword string) (logs []*Log, err error) {
 }
 
 type Stat struct {
-	Quota int `json:"quota"`
-	Rpm   int `json:"rpm"`
-	Tpm   int `json:"tpm"`
+	Quota          int  `json:"quota"`
+	Rpm            int  `json:"rpm"`
+	Tpm            int  `json:"tpm"`
+	RemainQuota    int  `json:"remain_quota"`
+	UnlimitedQuota bool `json:"unlimited_quota"`
 }
 
 func SumUsedQuota(logType int, startTimestamp int64, endTimestamp int64, modelName string, username string, tokenName string, channel int, group string) (stat Stat) {
+	stat.RemainQuota = 0
+	stat.UnlimitedQuota = false
+
 	tx := LOG_DB.Table("logs").Select("sum(quota) quota")
 
 	// 为rpm和tpm创建单独的查询
@@ -359,6 +365,18 @@ func SumUsedQuota(logType int, startTimestamp int64, endTimestamp int64, modelNa
 	// 执行查询
 	tx.Scan(&stat)
 	rpmTpmQuery.Scan(&stat)
+
+	if tokenName != "" {
+		token, err := GetTokenByName(tokenName)
+		if err != nil {
+			if !errors.Is(err, gorm.ErrRecordNotFound) {
+				common.SysError("failed to get token by name: " + err.Error())
+			}
+		} else if token != nil {
+			stat.RemainQuota = token.RemainQuota
+			stat.UnlimitedQuota = token.UnlimitedQuota
+		}
+	}
 
 	return stat
 }

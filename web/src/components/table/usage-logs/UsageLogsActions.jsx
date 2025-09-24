@@ -29,6 +29,7 @@ const LogsActions = ({
   showStat,
   compactMode,
   setCompactMode,
+  isPublic,
   t,
 }) => {
   const showSkeleton = useMinimumLoadingTime(loadingStat);
@@ -57,6 +58,21 @@ const LogsActions = ({
           >
             {t('消耗额度')}: {renderQuota(stat.quota)}
           </Tag>
+          {isPublic && (
+            <Tag
+              color='green'
+              style={{
+                fontWeight: 500,
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                padding: 13,
+              }}
+              className='!rounded-lg'
+            >
+              {stat.unlimited_quota
+                ? `${t('剩余额度')}: ${t('无限制')}`
+                : `${t('剩余额度')}: ${renderQuota(stat.remain_quota)}`}
+            </Tag>
+          )}
           <Tag
             color='pink'
             style={{
