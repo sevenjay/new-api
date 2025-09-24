@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"one-api/common"
 	"sync"
+	"sync/atomic"
 )
 
 var userUsableGroups = map[string]string{
@@ -11,6 +12,7 @@ var userUsableGroups = map[string]string{
 	"vip":     "vip分组",
 }
 var userUsableGroupsMutex sync.RWMutex
+var skipTokenGroupUsableCheckEnabled atomic.Bool
 
 func GetUserUsableGroupsCopy() map[string]string {
 	userUsableGroupsMutex.RLock()
@@ -73,4 +75,12 @@ func GetUsableGroupDescription(groupName string) string {
 		return desc
 	}
 	return groupName
+}
+
+func SetSkipTokenGroupUsableCheckEnabled(enabled bool) {
+	skipTokenGroupUsableCheckEnabled.Store(enabled)
+}
+
+func IsSkipTokenGroupUsableCheckEnabled() bool {
+	return skipTokenGroupUsableCheckEnabled.Load()
 }
