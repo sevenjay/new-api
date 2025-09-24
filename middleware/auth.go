@@ -154,6 +154,21 @@ func TryUserAuth() func(c *gin.Context) {
 	}
 }
 
+func MarketplaceAuth() func(c *gin.Context) {
+	return func(c *gin.Context) {
+		if operation_setting.IsModelMarketplaceRequireAuth() {
+			authHelper(c, common.RoleCommonUser)
+			return
+		}
+		session := sessions.Default(c)
+		id := session.Get("id")
+		if id != nil {
+			c.Set("id", id)
+		}
+		c.Next()
+	}
+}
+
 func UserAuth() func(c *gin.Context) {
 	return func(c *gin.Context) {
 		authHelper(c, common.RoleCommonUser)

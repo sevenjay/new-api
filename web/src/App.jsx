@@ -307,9 +307,20 @@ function App() {
         <Route
           path='/public_logs'
           element={
-            <Suspense fallback={<Loading></Loading>} key={location.pathname}>
-              <PublicLog />
-            </Suspense>
+            pricingRequireAuth ? (
+              <PrivateRoute>
+                <Suspense
+                  fallback={<Loading></Loading>}
+                  key={location.pathname}
+                >
+                  <PublicLog />
+                </Suspense>
+              </PrivateRoute>
+            ) : (
+              <Suspense fallback={<Loading></Loading>} key={location.pathname}>
+                <PublicLog />
+              </Suspense>
+            )
           }
         />
         <Route
