@@ -7,6 +7,7 @@ import (
 	"one-api/constant"
 	"one-api/model"
 	"one-api/setting"
+	"one-api/setting/operation_setting"
 	"one-api/setting/ratio_setting"
 	"strconv"
 	"strings"
@@ -144,6 +145,21 @@ func authHelper(c *gin.Context, minRole int) {
 
 func TryUserAuth() func(c *gin.Context) {
 	return func(c *gin.Context) {
+		session := sessions.Default(c)
+		id := session.Get("id")
+		if id != nil {
+			c.Set("id", id)
+		}
+		c.Next()
+	}
+}
+
+func MarketplaceAuth() func(c *gin.Context) {
+	return func(c *gin.Context) {
+		if operation_setting.IsModelMarketplaceRequireAuth() {
+			authHelper(c, common.RoleCommonUser)
+			return
+		}
 		session := sessions.Default(c)
 		id := session.Get("id")
 		if id != nil {
