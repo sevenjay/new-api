@@ -140,7 +140,7 @@ func updateSunoTaskAll(ctx context.Context, channelId int, taskIds []string, tas
 		return err
 	}
 	if !responseItems.IsSuccess() {
-		common.SysLog(fmt.Sprintf("渠道 #%d 未完成的任务有: %d, 成功获取到任务数: %d", channelId, len(taskIds), string(responseBody)))
+		common.SysLog(fmt.Sprintf("渠道 #%d 未完成的任务有: %d, 成功获取到任务数: %d", channelId, len(taskIds), len(responseItems.Data)))
 		return err
 	}
 
