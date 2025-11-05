@@ -2,8 +2,8 @@ package controller
 
 import (
 	"net/http"
-	"one-api/common"
-	"one-api/model"
+	"github.com/QuantumNous/new-api/common"
+	"github.com/QuantumNous/new-api/model"
 	"strconv"
 
 	"github.com/gin-gonic/gin"

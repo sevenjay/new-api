@@ -2,7 +2,7 @@ package operation_setting
 
 import (
 	"encoding/json"
-	"one-api/common"
+	"github.com/QuantumNous/new-api/common"
 )
 
 type headerNavModules struct {
