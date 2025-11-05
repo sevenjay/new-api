@@ -62,6 +62,45 @@ func clearChannelInfo(channel *model.Channel) {
 	}
 }
 
+func normalizeCredentialString(raw string) string {
+	return strings.TrimSpace(strings.ReplaceAll(raw, "\r\n", "\n"))
+}
+
+func resetChannelStateForCredentialChange(channel *model.Channel, origin *model.Channel) {
+	if channel.ChannelInfo.IsMultiKey {
+		channel.ChannelInfo.MultiKeyStatusList = nil
+		channel.ChannelInfo.MultiKeyDisabledReason = nil
+		channel.ChannelInfo.MultiKeyDisabledTime = nil
+		channel.ChannelInfo.MultiKeyPollingIndex = 0
+	}
+
+	if origin == nil || origin.Status != common.ChannelStatusManuallyDisabled {
+		channel.Status = common.ChannelStatusEnabled
+
+		var info map[string]interface{}
+		if channel.OtherInfo != "" {
+			info = channel.GetOtherInfo()
+		} else if origin != nil && origin.OtherInfo != "" {
+			info = origin.GetOtherInfo()
+		} else {
+			info = make(map[string]interface{})
+		}
+
+		delete(info, "status_reason")
+		delete(info, "status_time")
+
+		if len(info) == 0 {
+			if (origin != nil && origin.OtherInfo != "") || channel.OtherInfo != "" {
+				channel.SetOtherInfo(info)
+			} else {
+				channel.OtherInfo = ""
+			}
+		} else {
+			channel.SetOtherInfo(info)
+		}
+	}
+}
+
 func GetAllChannels(c *gin.Context) {
 	pageInfo := common.GetPageQuery(c)
 	channelData := make([]*model.Channel, 0)
@@ -865,6 +904,37 @@ func UpdateChannel(c *gin.Context) {
 			// 覆盖模式：直接使用新密钥（默认行为，不需要特殊处理）
 		}
 	}
+	originKeyNormalized := normalizeCredentialString(originChannel.Key)
+	modeValue := ""
+	if channel.KeyMode != nil {
+		modeValue = strings.TrimSpace(*channel.KeyMode)
+	}
+	isAppendMode := strings.EqualFold(modeValue, "append")
+	trimmedKey := strings.TrimSpace(channel.Key)
+	keyProvided := trimmedKey != ""
+	newKeyNormalized := normalizeCredentialString(channel.Key)
+	keyReplaced := keyProvided && (!channel.ChannelInfo.IsMultiKey || !isAppendMode)
+
+	baseURLChanged := false
+	if channel.BaseURL != nil {
+		newBase := strings.TrimSpace(*channel.BaseURL)
+		oldBase := ""
+		if originChannel.BaseURL != nil {
+			oldBase = strings.TrimSpace(*originChannel.BaseURL)
+		}
+		baseURLChanged = newBase != oldBase
+	}
+
+	shouldReset := baseURLChanged
+	if !shouldReset && keyReplaced {
+		if newKeyNormalized != originKeyNormalized || originChannel.Status == common.ChannelStatusAutoDisabled {
+			shouldReset = true
+		}
+	}
+	if shouldReset {
+		resetChannelStateForCredentialChange(&channel.Channel, originChannel)
+	}
+
 	err = channel.Update()
 	if err != nil {
 		common.ApiError(c, err)
