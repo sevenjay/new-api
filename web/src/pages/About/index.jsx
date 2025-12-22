@@ -31,22 +31,35 @@ const About = () => {
   const { t } = useTranslation();
   const [about, setAbout] = useState('');
   const [aboutLoaded, setAboutLoaded] = useState(false);
+  const [version, setVersion] = useState('');
   const currentYear = new Date().getFullYear();
 
   const displayAbout = async () => {
     setAbout(localStorage.getItem('about') || '');
-    const res = await API.get('/api/about');
-    const { success, message, data } = res.data;
-    if (success) {
-      let aboutContent = data;
-      if (!data.startsWith('https://')) {
-        aboutContent = marked.parse(data);
+    try {
+      const res = await API.get('/api/about');
+      const { success, message, data } = res.data;
+      if (success) {
+        let aboutContent = data;
+        if (!data.startsWith('https://')) {
+          aboutContent = marked.parse(data);
+        }
+        setAbout(aboutContent);
+        localStorage.setItem('about', aboutContent);
+      } else {
+        showError(message);
+        setAbout(t('加载关于内容失败...'));
       }
-      setAbout(aboutContent);
-      localStorage.setItem('about', aboutContent);
-    } else {
-      showError(message);
+    } catch (err) {
+      showError(err);
       setAbout(t('加载关于内容失败...'));
+    }
+    try {
+      const statusRes = await API.get('/api/status');
+      const statusVersion = statusRes?.data?.data?.version || '';
+      setVersion(statusVersion);
+    } catch (err) {
+      // Ignore status failures; about content should still render.
     }
     setAboutLoaded(true);
   };
@@ -62,6 +75,11 @@ const About = () => {
   const customDescription = (
     <div style={{ textAlign: 'center' }}>
       <p>{t('可在设置页面设置关于内容，支持 HTML & Markdown')}</p>
+      {version ? (
+        <p>
+          {t('当前版本')}: {version}
+        </p>
+      ) : null}
       {t('New API项目仓库地址：')}
       <a
         href='https://github.com/QuantumNous/new-api'
@@ -153,6 +171,11 @@ const About = () => {
         </div>
       ) : (
         <>
+          {version ? (
+            <div className='mb-4 text-sm text-semi-color-text-2'>
+              {t('当前版本')}: {version}
+            </div>
+          ) : null}
           {about.startsWith('https://') ? (
             <iframe
               src={about}
