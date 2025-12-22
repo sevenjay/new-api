@@ -84,6 +84,14 @@ export const getUserLogStats = (
   params: Omit<GetLogStatsParams, 'username' | 'channel'> = {}
 ) => fetchLogStats('/api/log', params, false)
 
+export const getPublicLogs = (
+  params: Omit<GetLogsParams, 'username' | 'channel'> = {}
+) => fetchLogs('/api/public_log', params, true)
+
+export const getPublicLogStats = (
+  params: Omit<GetLogStatsParams, 'username' | 'channel'> = {}
+) => fetchLogStats('/api/public_log', params, true)
+
 export async function getUserInfo(
   userId: number
 ): Promise<{ success: boolean; message?: string; data?: UserInfo }> {

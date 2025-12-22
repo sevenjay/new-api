@@ -26,6 +26,7 @@ import type { ChannelAffinityInfo } from '../types'
 export type LogsViewScope = 'all' | 'self'
 
 interface UsageLogsContextValue {
+  publicView: boolean
   selectedUserId: number | null
   setSelectedUserId: (userId: number | null) => void
   userInfoDialogOpen: boolean
@@ -44,7 +45,10 @@ const UsageLogsContext = createContext<UsageLogsContextValue | undefined>(
   undefined
 )
 
-export function UsageLogsProvider({ children }: { children: ReactNode }) {
+export function UsageLogsProvider(props: {
+  children: ReactNode
+  publicView?: boolean
+}) {
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null)
   const [userInfoDialogOpen, setUserInfoDialogOpen] = useState(false)
   const [affinityTarget, setAffinityTarget] =
@@ -56,6 +60,7 @@ export function UsageLogsProvider({ children }: { children: ReactNode }) {
   return (
     <UsageLogsContext.Provider
       value={{
+        publicView: props.publicView ?? false,
         selectedUserId,
         setSelectedUserId,
         userInfoDialogOpen,
@@ -70,7 +75,7 @@ export function UsageLogsProvider({ children }: { children: ReactNode }) {
         setViewScope,
       }}
     >
-      {children}
+      {props.children}
     </UsageLogsContext.Provider>
   )
 }
@@ -93,12 +98,13 @@ export function useUsageLogsContext() {
  */
 export function useLogsViewScope() {
   const canManageScope = useIsAdmin()
-  const { viewScope, setViewScope } = useUsageLogsContext()
+  const { publicView, viewScope, setViewScope } = useUsageLogsContext()
 
   return {
-    canManageScope,
+    publicView,
+    canManageScope: !publicView && canManageScope,
     viewScope,
     setViewScope,
-    isAdminView: canManageScope && viewScope === 'all',
+    isAdminView: !publicView && canManageScope && viewScope === 'all',
   }
 }
