@@ -40,7 +40,7 @@ import {
 import { ITEMS_PER_PAGE } from '../../constants';
 import { useTableCompactMode } from '../common/useTableCompactMode';
 
-export const useLogsData = () => {
+export const useLogsData = (isPublic = false) => {
   const { t } = useTranslation();
 
   // Define column keys for selection
@@ -73,7 +73,7 @@ export const useLogsData = () => {
   const [logType, setLogType] = useState(0);
 
   // User and admin
-  const isAdminUser = isAdmin();
+  const isAdminUser = isPublic ? false : isAdmin();
   // Role-specific storage key to prevent different roles from overwriting each other
   const STORAGE_KEY = isAdminUser
     ? 'logs-table-columns-admin'
@@ -83,6 +83,8 @@ export const useLogsData = () => {
   const [stat, setStat] = useState({
     quota: 0,
     token: 0,
+    remain_quota: 0,
+    unlimited_quota: false,
   });
 
   // Form state
@@ -250,6 +252,29 @@ export const useLogsData = () => {
     }
   };
 
+  const getPublicLogStat = async () => {
+    const {
+      token_name,
+      model_name,
+      start_timestamp,
+      end_timestamp,
+      group,
+      logType: formLogType,
+    } = getFormValues();
+    const currentLogType = formLogType !== undefined ? formLogType : logType;
+    let localStartTimestamp = Date.parse(start_timestamp) / 1000;
+    let localEndTimestamp = Date.parse(end_timestamp) / 1000;
+    let url = `/api/public_log/stat?type=${currentLogType}&token_name=${token_name}&model_name=${model_name}&start_timestamp=${localStartTimestamp}&end_timestamp=${localEndTimestamp}&group=${group}`;
+    url = encodeURI(url);
+    let res = await API.get(url);
+    const { success, message, data } = res.data;
+    if (success) {
+      setStat(data);
+    } else {
+      showError(message);
+    }
+  };
+
   const getLogStat = async () => {
     const {
       username,
@@ -280,7 +305,9 @@ export const useLogsData = () => {
       return;
     }
     setLoadingStat(true);
-    if (isAdminUser) {
+    if (isPublic) {
+      await getPublicLogStat();
+    } else if (isAdminUser) {
       await getLogStat();
     } else {
       await getLogSelfStat();
@@ -526,7 +553,9 @@ export const useLogsData = () => {
 
     let localStartTimestamp = Date.parse(start_timestamp) / 1000;
     let localEndTimestamp = Date.parse(end_timestamp) / 1000;
-    if (isAdminUser) {
+    if (isPublic) {
+      url = `/api/public_log/?p=${startIdx}&page_size=${pageSize}&type=${currentLogType}&token_name=${token_name}&model_name=${model_name}&start_timestamp=${localStartTimestamp}&end_timestamp=${localEndTimestamp}&group=${group}`;
+    } else if (isAdminUser) {
       url = `/api/log/?p=${startIdx}&page_size=${pageSize}&type=${currentLogType}&username=${username}&token_name=${token_name}&model_name=${model_name}&start_timestamp=${localStartTimestamp}&end_timestamp=${localEndTimestamp}&channel=${channel}&group=${group}`;
     } else {
       url = `/api/log/self/?p=${startIdx}&page_size=${pageSize}&type=${currentLogType}&token_name=${token_name}&model_name=${model_name}&start_timestamp=${localStartTimestamp}&end_timestamp=${localEndTimestamp}&group=${group}`;
@@ -586,19 +615,21 @@ export const useLogsData = () => {
     const localPageSize =
       parseInt(localStorage.getItem('page-size')) || ITEMS_PER_PAGE;
     setPageSize(localPageSize);
-    loadLogs(activePage, localPageSize)
-      .then()
-      .catch((reason) => {
-        showError(reason);
-      });
-  }, []);
+    if (!isPublic) {
+      loadLogs(activePage, localPageSize)
+        .then()
+        .catch((reason) => {
+          showError(reason);
+        });
+    }
+  }, [isPublic]);
 
   // Initialize statistics when formApi is available
   useEffect(() => {
-    if (formApi) {
+    if (formApi && !isPublic) {
       handleEyeClick();
     }
-  }, [formApi]);
+  }, [formApi, isPublic]);
 
   // Check if any record has expandable content
   const hasExpandableRows = () => {
