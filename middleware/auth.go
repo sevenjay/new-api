@@ -12,7 +12,9 @@ import (
 	"github.com/QuantumNous/new-api/logger"
 	"github.com/QuantumNous/new-api/model"
 	"github.com/QuantumNous/new-api/service"
+	"github.com/QuantumNous/new-api/setting"
 	"github.com/QuantumNous/new-api/setting/ratio_setting"
+	"github.com/QuantumNous/new-api/setting/operation_setting"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -147,6 +149,21 @@ func authHelper(c *gin.Context, minRole int) {
 
 func TryUserAuth() func(c *gin.Context) {
 	return func(c *gin.Context) {
+		session := sessions.Default(c)
+		id := session.Get("id")
+		if id != nil {
+			c.Set("id", id)
+		}
+		c.Next()
+	}
+}
+
+func MarketplaceAuth() func(c *gin.Context) {
+	return func(c *gin.Context) {
+		if operation_setting.IsModelMarketplaceRequireAuth() {
+			authHelper(c, common.RoleCommonUser)
+			return
+		}
 		session := sessions.Default(c)
 		id := session.Get("id")
 		if id != nil {
