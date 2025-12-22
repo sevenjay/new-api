@@ -142,6 +142,14 @@ export async function exportLogs(
   return result.data?.count ?? 0
 }
 
+export const getPublicLogs = (
+  params: Omit<GetLogsParams, 'username' | 'channel'> = {}
+) => fetchLogs('/api/public_log', params, true)
+
+export const getPublicLogStats = (
+  params: Omit<GetLogStatsParams, 'username' | 'channel'> = {}
+) => fetchLogStats('/api/public_log', params, true)
+
 export async function getUserInfo(
   userId: number
 ): Promise<{ success: boolean; message?: string; data?: UserInfo }> {

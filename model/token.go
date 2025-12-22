@@ -302,6 +302,25 @@ func GetTokenByKey(key string, fromDB bool) (token *Token, err error) {
 	return token, nil
 }
 
+func GetTokenByName(name string) (*Token, error) {
+	if name == "" {
+		return nil, errors.New("name 为空！")
+	}
+	var token Token
+	err := DB.Where("name = ?", name).First(&token).Error
+	if err != nil {
+		return nil, err
+	}
+	// Match key lookups: initialize cold caches without overwriting live quota
+	// or publishing a database snapshot while a mutation fence is active.
+	if common.RedisEnabled {
+		if _, cacheErr := cacheInitToken(token); cacheErr != nil {
+			common.SysError("failed to init token cache by name: " + cacheErr.Error())
+		}
+	}
+	return &token, nil
+}
+
 func (token *Token) Insert() error {
 	var err error
 	err = DB.Create(token).Error

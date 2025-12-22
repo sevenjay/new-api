@@ -2,6 +2,7 @@ package model
 
 import (
 	"context"
+	"errors"
 	"strings"
 	"time"
 
@@ -681,9 +682,11 @@ func streamLogs(tx *gorm.DB, order string, fn func(*Log) error) error {
 }
 
 type Stat struct {
-	Quota int `json:"quota"`
-	Rpm   int `json:"rpm"`
-	Tpm   int `json:"tpm"`
+	Quota          int  `json:"quota"`
+	Rpm            int  `json:"rpm"`
+	Tpm            int  `json:"tpm"`
+	RemainQuota    int  `json:"remain_quota"`
+	UnlimitedQuota bool `json:"unlimited_quota"`
 }
 
 func SumUsedQuota(logType int, startTimestamp int64, endTimestamp int64, modelName string, username string, tokenName string, channel int, group string) (stat Stat, err error) {
@@ -744,6 +747,18 @@ func SumUsedQuota(logType int, startTimestamp int64, endTimestamp int64, modelNa
 	}
 	stat.Rpm = rateStat.Rpm
 	stat.Tpm = rateStat.Tpm
+
+	if tokenName != "" {
+		token, tokenErr := GetTokenByName(tokenName)
+		if tokenErr != nil {
+			if !errors.Is(tokenErr, gorm.ErrRecordNotFound) {
+				common.SysError("failed to get token by name: " + tokenErr.Error())
+			}
+		} else if token != nil {
+			stat.RemainQuota = token.RemainQuota
+			stat.UnlimitedQuota = token.UnlimitedQuota
+		}
+	}
 
 	return stat, nil
 }
