@@ -294,6 +294,12 @@ func SetApiRouter(router *gin.Engine) {
 			systemInfoRoute.DELETE("/instances/:node_name", controller.DeleteStaleSystemInstance)
 		}
 
+		publicLogRoute := apiRouter.Group("/public_log")
+		{
+			publicLogRoute.GET("/", controller.GetPublicLogs)
+			publicLogRoute.GET("/stat", controller.GetPublicLogStat)
+		}
+
 		dataRoute := apiRouter.Group("/data")
 		dataRoute.GET("/", middleware.AdminAuth(), controller.GetAllQuotaDates)
 		dataRoute.GET("/users", middleware.AdminAuth(), controller.GetQuotaDatesByUser)
