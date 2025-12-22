@@ -16,10 +16,12 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 import z from 'zod'
 
 import { PublicUsageLogs } from '@/features/usage-logs/public'
+import { getFreshModuleAccess } from '@/lib/nav-modules'
+import { useAuthStore } from '@/stores/auth-store'
 
 const logTypeValues = ['0', '1', '2', '3', '4', '5', '6', '7'] as const
 const publicLogsSearchSchema = z.object({
@@ -42,5 +44,14 @@ const publicLogsSearchSchema = z.object({
 
 export const Route = createFileRoute('/public_logs')({
   validateSearch: publicLogsSearchSchema,
+  beforeLoad: async ({ location }) => {
+    const access = await getFreshModuleAccess('pricing')
+    if (access.requireAuth && !useAuthStore.getState().auth.user) {
+      throw redirect({
+        to: '/sign-in',
+        search: { redirect: location.href },
+      })
+    }
+  },
   component: PublicUsageLogs,
 })

@@ -295,6 +295,7 @@ func SetApiRouter(router *gin.Engine) {
 		}
 
 		publicLogRoute := apiRouter.Group("/public_log")
+		publicLogRoute.Use(middleware.HeaderNavModulePublicOrUserAuth("pricing"))
 		{
 			publicLogRoute.GET("/", controller.GetPublicLogs)
 			publicLogRoute.GET("/stat", controller.GetPublicLogStat)
