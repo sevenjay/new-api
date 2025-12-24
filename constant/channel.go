@@ -30,6 +30,7 @@ const (
 	ChannelTypeZhipu_v4       = 26
 	ChannelTypePerplexity     = 27
 	ChannelTypeLingYiWanWu    = 31
+	ChannelTypeDeepInfra      = 32
 	ChannelTypeAws            = 33
 	ChannelTypeCohere         = 34
 	ChannelTypeMiniMax        = 35
@@ -92,7 +93,7 @@ var ChannelBaseURLs = []string{
 	"",                                          //29
 	"",                                          //30
 	"https://api.lingyiwanwu.com",               //31
-	"",                                          //32
+	"https://api.deepinfra.com",                 //32
 	"",                                          //33
 	"https://api.cohere.ai",                     //34
 	"https://api.minimax.chat",                  //35
@@ -150,6 +151,7 @@ var ChannelTypeNames = map[int]string{
 	ChannelTypeZhipu_v4:       "ZhipuV4",
 	ChannelTypePerplexity:     "Perplexity",
 	ChannelTypeLingYiWanWu:    "LingYiWanWu",
+	ChannelTypeDeepInfra:      "DeepInfra",
 	ChannelTypeAws:            "AWS",
 	ChannelTypeCohere:         "Cohere",
 	ChannelTypeMiniMax:        "MiniMax",

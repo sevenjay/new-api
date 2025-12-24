@@ -31,6 +31,7 @@ import {
   Zhipu,
   Qwen,
   DeepSeek,
+  DeepInfra,
   Minimax,
   Wenxin,
   Spark,
@@ -203,6 +204,11 @@ export const getModelCategories = (() => {
         icon: <DeepSeek.Color />,
         filter: (model) => model.model_name.toLowerCase().includes('deepseek'),
       },
+      deepinfra: {
+        label: 'DeepInfra',
+        icon: <DeepInfra />,
+        filter: (model) => model.model_name.toLowerCase().includes('deepinfra'),
+      },
       minimax: {
         label: 'MiniMax',
         icon: <Minimax.Color />,
@@ -348,6 +354,8 @@ export function getChannelIcon(channelType) {
       return <Hunyuan.Color size={iconSize} />;
     case 31: // 零一万物
       return <Yi.Color size={iconSize} />;
+    case 32: // DeepInfra
+      return <DeepInfra size={iconSize} />;
     case 35: // MiniMax
       return <Minimax.Color size={iconSize} />;
     case 37: // Dify
