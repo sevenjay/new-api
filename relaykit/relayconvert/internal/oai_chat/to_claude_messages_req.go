@@ -1,6 +1,7 @@
 package oaichat
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"strings"
@@ -346,6 +347,62 @@ func OpenAIChatRequestToClaudeMessages(c context.Context, info convmeta.Meta, te
 							Text: kitutil.GetPointer[string](mediaMessage.Text),
 						})
 					}
+				case dto.ContentTypeImageURL:
+					source := mediaMessage.ToFileSource()
+					if source == nil {
+						return nil, fmt.Errorf("image content is empty")
+					}
+					base64Data, mimeType, err := relaymedia.ResolveBase64Data(c, source, "formatting image for Claude")
+					if err != nil {
+						return nil, fmt.Errorf("get image data failed: %s", err.Error())
+					}
+					claudeMediaMessages = append(claudeMediaMessages, dto.ClaudeMediaMessage{
+						Type: "image",
+						Source: &dto.ClaudeMessageSource{
+							Type:      "base64",
+							MediaType: mimeType,
+							Data:      base64Data,
+						},
+					})
+				case dto.ContentTypeFile:
+					file := mediaMessage.GetFile()
+					if file == nil {
+						return nil, fmt.Errorf("file content is empty")
+					}
+					if file.FileId != "" {
+						return nil, fmt.Errorf("file_id is not supported by Claude messages")
+					}
+					if file.FileData == "" {
+						return nil, fmt.Errorf("file_data is empty")
+					}
+					source := mediaMessage.ToFileSource()
+					base64Data, mimeType, err := relaymedia.ResolveBase64Data(c, source, "formatting file for Claude")
+					if err != nil {
+						return nil, fmt.Errorf("get file data failed: %s", err.Error())
+					}
+					mimeType = strings.ToLower(mimeType)
+					claudeMediaMessage := dto.ClaudeMediaMessage{Type: "document"}
+					switch {
+					case strings.HasPrefix(mimeType, "application/pdf"):
+						claudeMediaMessage.Source = &dto.ClaudeMessageSource{
+							Type:      "base64",
+							MediaType: mimeType,
+							Data:      base64Data,
+						}
+					case strings.HasPrefix(mimeType, "text/plain"):
+						decoded, err := base64.StdEncoding.DecodeString(base64Data)
+						if err != nil {
+							return nil, fmt.Errorf("decode plain text file data failed: %s", err.Error())
+						}
+						claudeMediaMessage.Source = &dto.ClaudeMessageSource{
+							Type:      "text",
+							MediaType: mimeType,
+							Data:      string(decoded),
+						}
+					default:
+						return nil, fmt.Errorf("unsupported file type for Claude documents: %s", mimeType)
+					}
+					claudeMediaMessages = append(claudeMediaMessages, claudeMediaMessage)
 				default:
 					source := mediaMessage.ToFileSource()
 					if source == nil {
