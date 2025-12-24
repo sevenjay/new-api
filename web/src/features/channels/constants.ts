@@ -68,6 +68,7 @@ export const CHANNEL_TYPES = {
   26: 'Zhipu GLM',
   27: 'Perplexity',
   31: 'LingYiWanWu',
+  32: 'DeepInfra',
   33: 'AWS',
   34: 'Cohere',
   35: 'MiniMax',
@@ -138,6 +139,7 @@ export const CHANNEL_PROVIDER_PRESENTATION: Partial<
   26: { descriptionKey: 'Access Zhipu models through the V4 API' },
   27: { descriptionKey: 'Connect to Perplexity model services' },
   31: { descriptionKey: 'Connect to LingYiWanWu model services' },
+  32: { descriptionKey: 'Connect to DeepInfra model inference services' },
   33: { descriptionKey: 'Access models through Amazon Bedrock' },
   34: { descriptionKey: 'Connect to Cohere model services' },
   35: { descriptionKey: 'Connect to MiniMax model services' },
@@ -189,8 +191,8 @@ export const CHANNEL_PROVIDER_PRESENTATION: Partial<
 
 const CHANNEL_TYPE_DISPLAY_ORDER: number[] = [
   1, 14, 24, 33, 43, 3, 41, 17, 45, 25, 26, 23, 48, 60, 58, 59, 61, 42, 34, 20,
-  4, 62, 40, 27, 15, 46, 18, 31, 35, 49, 19, 47, 37, 38, 39, 11, 8, 57, 22, 21,
-  44, 2, 5, 36, 50, 51, 52, 53, 54, 55, 56,
+  4, 62, 40, 32, 27, 15, 46, 18, 31, 35, 49, 19, 47, 37, 38, 39, 11, 8, 57, 22,
+  21, 44, 2, 5, 36, 50, 51, 52, 53, 54, 55, 56,
 ]
 
 export const CHANNEL_TYPE_OPTIONS: { value: number; label: string }[] = (() => {
@@ -514,6 +516,7 @@ export const MODEL_FETCHABLE_TYPES = new Set([
   26,
   27,
   31,
+  32,
   34,
   35,
   40,

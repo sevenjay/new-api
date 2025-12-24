@@ -1450,6 +1450,7 @@
     "Connect to Alibaba Cloud Bailian model services": "Подключение к моделям Alibaba Cloud Bailian",
     "Connect to Cohere model services": "Подключение к моделям Cohere",
     "Connect to Coze bots": "Подключение к ботам Coze",
+    "Connect to DeepInfra model inference services": "Подключить сервисы инференса DeepInfra",
     "Connect to DeepSeek model services": "Подключение к моделям DeepSeek",
     "Connect to Dify applications and workflows": "Подключение к приложениям и рабочим процессам Dify",
     "Connect to Doubao Seedance video and Seedream image generation through Volcengine Ark": "Подключение генерации видео Doubao Seedance и изображений Seedream через Volcengine Ark",

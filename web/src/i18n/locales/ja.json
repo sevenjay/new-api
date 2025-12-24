@@ -1450,6 +1450,7 @@
     "Connect to Alibaba Cloud Bailian model services": "Alibaba Cloud Bailian のモデルサービスに接続",
     "Connect to Cohere model services": "Cohere のモデルサービスに接続",
     "Connect to Coze bots": "Coze のボットに接続",
+    "Connect to DeepInfra model inference services": "DeepInfra のモデル推論サービスに接続",
     "Connect to DeepSeek model services": "DeepSeek のモデルサービスに接続",
     "Connect to Dify applications and workflows": "Dify のアプリケーションとワークフローに接続",
     "Connect to Doubao Seedance video and Seedream image generation through Volcengine Ark": "Volcengine Ark 経由で Doubao Seedance の動画生成と Seedream の画像生成に接続",

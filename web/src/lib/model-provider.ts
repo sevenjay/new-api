@@ -33,6 +33,7 @@ type ModelProviderRule = ModelProvider & {
 // Match specific providers before overlapping model families: 360gpt before
 // GPT, and Perplexity's Sonar / NVIDIA's Nemotron before Llama or Mixtral.
 const MODEL_PROVIDER_RULES: readonly ModelProviderRule[] = [
+  { name: 'DeepInfra', icon: 'DeepInfra.Color', keywords: ['deepinfra'] },
   { name: '360 AI', icon: 'Ai360.Color', keywords: ['360gpt', '360zhinao'] },
   {
     name: 'Perplexity',

@@ -1450,6 +1450,7 @@
     "Connect to Alibaba Cloud Bailian model services": "接入阿里云百炼模型服务",
     "Connect to Cohere model services": "接入 Cohere 模型服务",
     "Connect to Coze bots": "接入 Coze 智能体",
+    "Connect to DeepInfra model inference services": "接入 DeepInfra 模型推理服务",
     "Connect to DeepSeek model services": "接入 DeepSeek 模型服务",
     "Connect to Dify applications and workflows": "接入 Dify 应用与工作流",
     "Connect to Doubao Seedance video and Seedream image generation through Volcengine Ark": "通过火山方舟接入豆包 Seedance 视频生成与 Seedream 图片生成",
