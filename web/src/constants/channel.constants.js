@@ -113,6 +113,7 @@ export const CHANNEL_OPTIONS = [
   { value: 19, color: 'blue', label: '360 智脑' },
   { value: 23, color: 'teal', label: '腾讯混元' },
   { value: 31, color: 'green', label: '零一万物' },
+  { value: 32, color: 'blue', label: 'DeepInfra' },
   { value: 35, color: 'green', label: 'MiniMax' },
   { value: 37, color: 'teal', label: 'Dify' },
   { value: 38, color: 'blue', label: 'Jina' },
