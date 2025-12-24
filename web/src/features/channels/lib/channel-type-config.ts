@@ -113,6 +113,16 @@ export const CHANNEL_TYPE_CONFIGS: Record<number, ChannelTypeConfig> = {
       models: 'deepseek-chat,deepseek-coder',
     },
   },
+  32: {
+    id: 32,
+    name: CHANNEL_TYPES[32],
+    icon: 'deepinfra',
+    defaultBaseUrl: 'https://api.deepinfra.com/v1/openai',
+    hints: {
+      key: 'DeepInfra API Key',
+      models: 'Use model IDs from DeepInfra',
+    },
+  },
   20: {
     id: 20,
     name: CHANNEL_TYPES[20],
