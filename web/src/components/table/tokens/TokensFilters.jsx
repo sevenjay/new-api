@@ -84,7 +84,7 @@ const TokensFilters = ({
             field='searchGroup'
             placeholder={t('选择分组')}
             optionList={[
-              { label: t('选择分组'), value: null },
+              { label: t('选择分组'), value: '' },
               ...groupOptions,
             ]}
             showClear

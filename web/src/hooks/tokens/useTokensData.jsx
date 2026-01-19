@@ -232,6 +232,8 @@ export const useTokensData = (openFluentNotification) => {
       } else {
         showError(message);
       }
+    } catch (error) {
+      showError(error.message || '搜索失败');
     } finally {
       setSearching(false);
     }
