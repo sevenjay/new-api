@@ -65,8 +65,9 @@ func GetAllUserTokens(userId int, startIdx int, num int) ([]*Token, error) {
 
 func SearchUserTokens(userId int, keyword string, token string, group string) (tokens []*Token, err error) {
 	if token != "" {
-		token = strings.Trim(token, "sk-")
+		token = strings.TrimPrefix(token, "sk-")
 	}
+	group = strings.TrimSpace(group)
 	query := DB.Where("user_id = ?", userId).Where("name LIKE ?", "%"+keyword+"%").Where(commonKeyCol+" LIKE ?", "%"+token+"%")
 	if group != "" && group != "null" {
 		query = query.Where(commonGroupCol+" = ?", group)
