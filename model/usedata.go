@@ -108,14 +108,35 @@ func GetQuotaDataByUsername(username string, startTime int64, endTime int64) (qu
 	return quotaDatas, err
 }
 
-func GetQuotaDataByUserId(userId int, startTime int64, endTime int64) (quotaData []*QuotaData, err error) {
+func GetQuotaDataByUserId(userId int, startTime int64, endTime int64, tokenName string) (quotaData []*QuotaData, err error) {
 	var quotaDatas []*QuotaData
+	// 如果指定了 token_name，从 logs 表中聚合查询数据
+	if tokenName != "" {
+		err = LOG_DB.Table("logs").
+			Select("model_name, count(*) as count, sum(quota) as quota, sum(prompt_tokens) + sum(completion_tokens) as token_used, (created_at - MOD(created_at, 3600)) as created_at").
+			Where("user_id = ? and token_name = ? and created_at >= ? and created_at <= ? and type = ?", userId, tokenName, startTime, endTime, LogTypeConsume).
+			Group("model_name, created_at - MOD(created_at, 3600)").
+			Find(&quotaDatas).Error
+		return quotaDatas, err
+	}
 	// 从quota_data表中查询数据
 	err = DB.Table("quota_data").Where("user_id = ? and created_at >= ? and created_at <= ?", userId, startTime, endTime).Find(&quotaDatas).Error
 	return quotaDatas, err
 }
 
-func GetAllQuotaDates(startTime int64, endTime int64, username string) (quotaData []*QuotaData, err error) {
+func GetAllQuotaDates(startTime int64, endTime int64, username string, tokenName string) (quotaData []*QuotaData, err error) {
+	// 如果指定了 token_name，从 logs 表中聚合查询数据
+	if tokenName != "" {
+		var quotaDatas []*QuotaData
+		tx := LOG_DB.Table("logs").
+			Select("model_name, count(*) as count, sum(quota) as quota, sum(prompt_tokens) + sum(completion_tokens) as token_used, (created_at - MOD(created_at, 3600)) as created_at").
+			Where("token_name = ? and created_at >= ? and created_at <= ? and type = ?", tokenName, startTime, endTime, LogTypeConsume)
+		if username != "" {
+			tx = tx.Where("username = ?", username)
+		}
+		err = tx.Group("model_name, created_at - MOD(created_at, 3600)").Find(&quotaDatas).Error
+		return quotaDatas, err
+	}
 	if username != "" {
 		return GetQuotaDataByUsername(username, startTime, endTime)
 	}
