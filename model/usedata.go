@@ -110,8 +110,16 @@ func GetQuotaDataByUsername(username string, startTime int64, endTime int64) (qu
 
 func GetQuotaDataFromLogs(userId int, username string, tokenName string, startTime int64, endTime int64) (quotaData []*QuotaData, err error) {
 	var quotaDatas []*QuotaData
+	// Default to integer division for SQLite (and others where / is integer division for integers)
+	groupByExpr := "(created_at / 3600) * 3600"
+	if !common.UsingSQLite {
+		// For MySQL, / is float division, use DIV or CAST
+		// We use CAST to be safer across versions or strict modes, but DIV is standard MySQL for integer division
+		groupByExpr = "(created_at DIV 3600) * 3600"
+	}
+
 	tx := LOG_DB.Table("logs").
-		Select("model_name, count(*) as count, sum(quota) as quota, ifnull(sum(prompt_tokens),0) + ifnull(sum(completion_tokens),0) as token_used, (created_at / 3600) * 3600 as created_at").
+		Select("model_name, count(*) as count, sum(quota) as quota, ifnull(sum(prompt_tokens),0) + ifnull(sum(completion_tokens),0) as token_used, "+groupByExpr+" as created_at").
 		Where("created_at >= ? AND created_at <= ?", startTime, endTime).
 		Where("type = ?", LogTypeConsume)
 
@@ -125,7 +133,7 @@ func GetQuotaDataFromLogs(userId int, username string, tokenName string, startTi
 		tx = tx.Where("token_name = ?", tokenName)
 	}
 
-	err = tx.Group("model_name, (created_at / 3600) * 3600").Find(&quotaDatas).Error
+	err = tx.Group("model_name, " + groupByExpr).Find(&quotaDatas).Error
 	return quotaDatas, err
 }
 
