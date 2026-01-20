@@ -88,7 +88,7 @@ const SearchModal = ({
 
         {createFormField(Form.Input, {
           field: 'token_name',
-          label: t('Token 名称'),
+          label: t('令牌名称'),
           value: token_name,
           placeholder: t('可选值'),
           name: 'token_name',
