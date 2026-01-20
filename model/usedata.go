@@ -125,7 +125,7 @@ func GetQuotaDataByUserId(userId int, startTime int64, endTime int64, tokenName 
 	return quotaDatas, err
 }
 
-func GetAllQuotaDates(startTime int64, endTime int64, username string, tokenName string) (quotaData []*QuotaData, err error) {
+func GetAllQuotaDates(startTime int64, endTime int64, username string, tokenName string, groupBy string) (quotaData []*QuotaData, err error) {
 	if username != "" {
 		return GetQuotaDataByUsername(username, startTime, endTime, tokenName)
 	}
@@ -133,10 +133,18 @@ func GetAllQuotaDates(startTime int64, endTime int64, username string, tokenName
 	// 从quota_data表中查询数据
 	// only select model_name, sum(count) as count, sum(quota) as quota, model_name, created_at from quota_data group by model_name, created_at;
 	//err = DB.Table("quota_data").Where("created_at >= ? and created_at <= ?", startTime, endTime).Find(&quotaDatas).Error
-	tx := DB.Table("quota_data").Select("model_name, sum(count) as count, sum(quota) as quota, sum(token_used) as token_used, created_at").Where("created_at >= ? and created_at <= ?", startTime, endTime)
-	if tokenName != "" {
-		tx = tx.Where("token_name = ?", tokenName)
+	if groupBy == "token" {
+		tx := DB.Table("quota_data").Select("token_name, sum(count) as count, sum(quota) as quota, sum(token_used) as token_used, created_at").Where("created_at >= ? and created_at <= ?", startTime, endTime)
+		if tokenName != "" {
+			tx = tx.Where("token_name = ?", tokenName)
+		}
+		err = tx.Group("token_name, created_at").Find(&quotaDatas).Error
+	} else {
+		tx := DB.Table("quota_data").Select("model_name, sum(count) as count, sum(quota) as quota, sum(token_used) as token_used, created_at").Where("created_at >= ? and created_at <= ?", startTime, endTime)
+		if tokenName != "" {
+			tx = tx.Where("token_name = ?", tokenName)
+		}
+		err = tx.Group("model_name, created_at").Find(&quotaDatas).Error
 	}
-	err = tx.Group("model_name, created_at").Find(&quotaDatas).Error
 	return quotaDatas, err
 }
