@@ -35,6 +35,7 @@ export const DEFAULT_ADMIN_CONFIG = {
     enabled: true,
     detail: true,
     token: true,
+    token_analytics: true,
     log: true,
     midjourney: true,
     task: true,
