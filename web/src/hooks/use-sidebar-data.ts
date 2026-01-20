@@ -24,6 +24,7 @@ import {
   FileText,
   FlaskConical,
   Key,
+  KeyRound,
   LayoutDashboard,
   ListTodo,
   MessageSquare,
@@ -82,6 +83,11 @@ export function useSidebarData(): SidebarData {
             title: t('Dashboard'),
             url: '/dashboard/models',
             icon: LayoutDashboard,
+          },
+          {
+            title: t('Token Analysis'),
+            url: '/token-analytics',
+            icon: KeyRound,
           },
           {
             title: t('API Keys'),
