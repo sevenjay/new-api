@@ -59,6 +59,7 @@ interface ModelsFilterProps {
   onReset: () => void
   titleKey?: string
   descriptionKey?: string
+  showTokenName?: boolean
 }
 
 // Quick-range presets imply a sensible granularity (matching the app's
@@ -282,6 +283,18 @@ export function ModelsFilter(props: ModelsFilterProps) {
               </SelectContent>
             </Select>
           </div>
+
+          {props.showTokenName && (
+            <div className='grid gap-2'>
+              <Label htmlFor='token_name'>{t('Token Name')}</Label>
+              <Input
+                id='token_name'
+                placeholder={t('Filter by token name')}
+                value={filters.token_name}
+                onChange={(e) => handleChange('token_name', e.target.value)}
+              />
+            </div>
+          )}
 
           {/* Admin-only fields */}
           {isAdmin && (

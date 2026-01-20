@@ -275,6 +275,7 @@ export function Dashboard() {
           currentFilters={modelFilters}
           onFilterChange={handleFilterChange}
           onReset={handleResetFilters}
+          showTokenName
         />
       </>
     ) : null
