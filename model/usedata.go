@@ -110,11 +110,10 @@ func GetQuotaDataByUsername(username string, startTime int64, endTime int64) (qu
 
 func GetQuotaDataFromLogs(userId int, username string, tokenName string, startTime int64, endTime int64) (quotaData []*QuotaData, err error) {
 	var quotaDatas []*QuotaData
-	// Default to integer division for SQLite (and others where / is integer division for integers)
+	// Default to integer division for SQLite and PostgreSQL (where / is integer division for integers)
 	groupByExpr := "(created_at / 3600) * 3600"
-	if !common.UsingSQLite {
-		// For MySQL, / is float division, use DIV or CAST
-		// We use CAST to be safer across versions or strict modes, but DIV is standard MySQL for integer division
+	if LOG_DB.Dialector.Name() == "mysql" {
+		// For MySQL, / is float division, use DIV
 		groupByExpr = "(created_at DIV 3600) * 3600"
 	}
 

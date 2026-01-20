@@ -4,7 +4,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/QuantumNous/new-api/common"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -19,7 +18,6 @@ func TestGetQuotaDataFromLogs(t *testing.T) {
 	// Set global DBs
 	DB = db
 	LOG_DB = db
-	common.UsingSQLite = true // Force SQLite mode
 
 	// Migrate
 	err = db.AutoMigrate(&Log{})
@@ -47,7 +45,8 @@ func TestGetQuotaDataFromLogs(t *testing.T) {
 
 	// Test SQLite Path
 	t.Run("SQLite Path", func(t *testing.T) {
-		common.UsingSQLite = true
+		// LOG_DB is SQLite, so Dialector.Name() != "mysql"
+		// It should use / which works
 		data, err := GetQuotaDataFromLogs(0, "", "test_token", now-3600, now+3600)
 		if err != nil {
 			t.Fatalf("SQLite path failed: %v", err)
@@ -57,19 +56,5 @@ func TestGetQuotaDataFromLogs(t *testing.T) {
 		} else {
 			t.Logf("Data found: %+v", data[0])
 		}
-	})
-
-	// Test MySQL Path (Simulated check)
-	// This ensures that when UsingSQLite is false, it tries to use MySQL syntax (DIV).
-	// Running MySQL syntax on SQLite should fail.
-	t.Run("MySQL Path Logic Check", func(t *testing.T) {
-		common.UsingSQLite = false
-		defer func() { common.UsingSQLite = true }() // Restore
-
-		_, err := GetQuotaDataFromLogs(0, "", "test_token", now-3600, now+3600)
-		if err == nil {
-			t.Fatal("Expected error when using MySQL syntax (DIV) on SQLite, but got nil")
-		}
-		t.Logf("Got expected error for MySQL syntax on SQLite: %v", err)
 	})
 }
