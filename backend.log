@@ -1,0 +1,296 @@
+go: downloading go1.25.1 (linux/amd64)
+go: downloading github.com/bytedance/gopkg v0.1.3
+go: downloading github.com/gin-contrib/sessions v0.0.5
+go: downloading github.com/gin-gonic/gin v1.9.1
+go: downloading github.com/joho/godotenv v1.5.1
+go: downloading github.com/abema/go-mp4 v1.4.1
+go: downloading github.com/gin-contrib/static v0.0.1
+go: downloading github.com/go-audio/aiff v1.1.0
+go: downloading github.com/go-audio/wav v1.1.0
+go: downloading github.com/go-playground/validator/v10 v10.20.0
+go: downloading github.com/go-redis/redis/v8 v8.11.5
+go: downloading github.com/google/uuid v1.6.0
+go: downloading github.com/grafana/pyroscope-go v1.2.7
+go: downloading github.com/jfreymuth/oggvorbis v1.0.5
+go: downloading github.com/jinzhu/copier v0.4.0
+go: downloading github.com/mewkiz/flac v1.0.13
+go: downloading github.com/pkg/errors v0.9.1
+go: downloading github.com/pquerna/otp v1.5.0
+go: downloading github.com/samber/lo v1.52.0
+go: downloading github.com/shirou/gopsutil v3.21.11+incompatible
+go: downloading github.com/tcolgate/mp3 v0.0.0-20170426193717-e79c5a46d300
+go: downloading github.com/yapingcat/gomedia v0.0.0-20240906162731-17feea57090c
+go: downloading golang.org/x/crypto v0.45.0
+go: downloading gorm.io/gorm v1.25.2
+go: downloading github.com/andybalholm/brotli v1.1.1
+go: downloading github.com/gin-contrib/cors v1.7.2
+go: downloading github.com/gin-contrib/gzip v0.0.6
+go: downloading github.com/glebarez/sqlite v1.9.0
+go: downloading github.com/go-webauthn/webauthn v0.14.0
+go: downloading github.com/shopspring/decimal v1.4.0
+go: downloading gorm.io/driver/mysql v1.4.3
+go: downloading gorm.io/driver/postgres v1.5.2
+go: downloading github.com/Calcium-Ion/go-epay v0.0.4
+go: downloading github.com/gorilla/websocket v1.5.0
+go: downloading github.com/stripe/stripe-go/v81 v81.4.0
+go: downloading github.com/thanhpk/randstr v1.0.6
+go: downloading golang.org/x/sync v0.18.0
+go: downloading github.com/anknown/ahocorasick v0.0.0-20190904063843-d75dbd5169c0
+go: downloading golang.org/x/image v0.23.0
+go: downloading github.com/tiktoken-go/tokenizer v0.6.2
+go: downloading golang.org/x/net v0.47.0
+go: downloading github.com/gorilla/context v1.1.1
+go: downloading github.com/gorilla/sessions v1.2.1
+go: downloading github.com/gin-contrib/sse v0.1.0
+go: downloading github.com/mattn/go-isatty v0.0.20
+go: downloading github.com/cespare/xxhash/v2 v2.3.0
+go: downloading github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f
+go: downloading github.com/gabriel-vasile/mimetype v1.4.3
+go: downloading github.com/go-playground/universal-translator v0.18.1
+go: downloading github.com/leodido/go-urn v1.4.0
+go: downloading golang.org/x/text v0.31.0
+go: downloading github.com/grafana/pyroscope-go/godeltaprof v0.1.9
+go: downloading github.com/jfreymuth/vorbis v1.0.2
+go: downloading github.com/boombuler/barcode v1.1.0
+go: downloading github.com/go-audio/audio v1.0.0
+go: downloading github.com/go-audio/riff v1.0.0
+go: downloading github.com/icza/bitio v1.1.0
+go: downloading github.com/mewkiz/pkg v0.0.0-20250417130911-3f050ff8c56d
+go: downloading github.com/tklauser/go-sysconf v0.3.12
+go: downloading github.com/jinzhu/now v1.1.5
+go: downloading github.com/tidwall/gjson v1.18.0
+go: downloading github.com/tidwall/sjson v1.2.5
+go: downloading github.com/glebarez/go-sqlite v1.21.2
+go: downloading modernc.org/sqlite v1.40.1
+go: downloading github.com/golang-jwt/jwt/v5 v5.3.0
+go: downloading github.com/google/go-tpm v0.9.5
+go: downloading github.com/mitchellh/mapstructure v1.5.0
+go: downloading github.com/go-sql-driver/mysql v1.7.0
+go: downloading github.com/jackc/pgx/v5 v5.7.1
+go: downloading github.com/anknown/darts v0.0.0-20151216065714-83ff685239e6
+go: downloading github.com/dlclark/regexp2 v1.11.5
+go: downloading github.com/gorilla/securecookie v1.1.1
+go: downloading github.com/pelletier/go-toml/v2 v2.2.1
+go: downloading github.com/ugorji/go/codec v1.2.12
+go: downloading google.golang.org/protobuf v1.34.2
+go: downloading gopkg.in/yaml.v3 v3.0.1
+go: downloading golang.org/x/sys v0.38.0
+go: downloading github.com/go-playground/locales v0.14.1
+go: downloading github.com/klauspost/compress v1.17.8
+go: downloading github.com/mewpkg/term v0.0.0-20241026122259-37a80af23985
+go: downloading github.com/tklauser/numcpus v0.6.1
+go: downloading github.com/jinzhu/inflection v1.0.0
+go: downloading github.com/aws/aws-sdk-go-v2 v1.37.2
+go: downloading github.com/aws/aws-sdk-go-v2/credentials v1.17.11
+go: downloading github.com/aws/aws-sdk-go-v2/service/bedrockruntime v1.33.0
+go: downloading github.com/aws/smithy-go v1.22.5
+go: downloading github.com/tidwall/match v1.1.1
+go: downloading github.com/tidwall/pretty v1.2.0
+go: downloading modernc.org/libc v1.66.10
+go: downloading github.com/go-webauthn/x v0.1.25
+go: downloading github.com/fxamacker/cbor/v2 v2.9.0
+go: downloading github.com/jackc/pgpassfile v1.0.0
+go: downloading github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761
+go: downloading github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.0
+go: downloading github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.2
+go: downloading github.com/x448/float16 v0.8.4
+go: downloading github.com/jackc/puddle/v2 v2.2.2
+go: downloading github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.2
+go: downloading modernc.org/mathutil v1.7.1
+go: downloading modernc.org/memory v1.11.0
+go: downloading github.com/dustin/go-humanize v1.0.1
+go: downloading golang.org/x/exp v0.0.0-20250620022241-b7579e27df2b
+go: downloading github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec
+[SYS] 2026/01/20 - 08:50:38 | initializing token encoders
+[SYS] 2026/01/20 - 08:50:38 | token encoders initialized
+[SYS] 2026/01/20 - 08:50:38 | SQL_DSN not set, using SQLite as database
+[SYS] 2026/01/20 - 08:50:38 | database migration started
+
+2026/01/20 08:50:39 [31;1m/app/model/setup.go:11 [35;1mrecord not found
+[0m[33m[0.151ms] [34;1m[rows:0][0m SELECT * FROM `setups` ORDER BY `setups`.`id` LIMIT 1
+
+2026/01/20 08:50:39 [31;1m/app/model/user.go:926 [35;1mrecord not found
+[0m[33m[0.315ms] [34;1m[rows:0][0m SELECT * FROM `users` WHERE role = 100 AND `users`.`deleted_at` IS NULL ORDER BY `users`.`id` LIMIT 1
+[SYS] 2026/01/20 - 08:50:39 | system is not initialized and no root user exists
+[SYS] 2026/01/20 - 08:50:39 | REDIS_CONN_STRING not set, Redis is not enabled
+[SYS] 2026/01/20 - 08:50:39 | New API v0.0.0 started
+[SYS] 2026/01/20 - 08:50:39 | 正在更新数据看板数据...
+[SYS] 2026/01/20 - 08:50:39 | 保存数据看板数据成功，共保存0条数据
+[INFO] 2026/01/20 - 08:50:39 | SYSTEM | codex credential auto-refresh task started: tick=10m0s threshold=24h0m0s
+
+  [32mNew API v0.0.0[0m  ready in 424 ms
+
+  ➜  [1mLocal:[0m   http://localhost:3000/
+  ➜  [1mNetwork:[0m http://192.168.0.2:3000/
+  ➜  [1mNetwork:[0m http://172.17.0.1:3000/
+
+[SYS] 2026/01/20 - 08:50:54 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:50:54 | 任务进度轮询完成
+[SYS] 2026/01/20 - 08:51:09 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:51:09 | 任务进度轮询完成
+[SYS] 2026/01/20 - 08:51:24 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:51:24 | 任务进度轮询完成
+[SYS] 2026/01/20 - 08:51:39 | syncing options from database
+[SYS] 2026/01/20 - 08:51:39 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:51:39 | 任务进度轮询完成
+[SYS] 2026/01/20 - 08:51:54 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:51:54 | 任务进度轮询完成
+[GIN] 2026/01/20 - 08:52:08 | 202601200852083355652910gqkQvyB | 200 |    1.643142ms |             ::1 |     GET /api/status
+[SYS] 2026/01/20 - 08:52:09 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:52:09 | 任务进度轮询完成
+
+2026/01/20 08:52:09 [31;1m/app/model/user.go:926 [35;1mrecord not found
+[0m[33m[0.377ms] [34;1m[rows:0][0m SELECT * FROM `users` WHERE role = 100 AND `users`.`deleted_at` IS NULL ORDER BY `users`.`id` LIMIT 1
+[GIN] 2026/01/20 - 08:52:09 | 20260120085209765974690AK29KUuH | 200 |     385.907µs |             ::1 |     GET /api/status
+[GIN] 2026/01/20 - 08:52:09 | 20260120085209765828515OvCocaij | 200 |    3.721113ms |             ::1 |     GET /api/setup
+[SYS] 2026/01/20 - 08:52:24 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:52:24 | 任务进度轮询完成
+[SYS] 2026/01/20 - 08:52:39 | syncing options from database
+[SYS] 2026/01/20 - 08:52:39 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:52:39 | 任务进度轮询完成
+[SYS] 2026/01/20 - 08:52:54 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:52:54 | 任务进度轮询完成
+[SYS] 2026/01/20 - 08:53:09 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:53:09 | 任务进度轮询完成
+[SYS] 2026/01/20 - 08:53:24 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:53:24 | 任务进度轮询完成
+[SYS] 2026/01/20 - 08:53:39 | syncing options from database
+[SYS] 2026/01/20 - 08:53:39 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:53:39 | 任务进度轮询完成
+[SYS] 2026/01/20 - 08:53:54 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:53:54 | 任务进度轮询完成
+[SYS] 2026/01/20 - 08:54:09 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:54:09 | 任务进度轮询完成
+[SYS] 2026/01/20 - 08:54:24 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:54:24 | 任务进度轮询完成
+[SYS] 2026/01/20 - 08:54:39 | syncing options from database
+[SYS] 2026/01/20 - 08:54:39 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:54:39 | 任务进度轮询完成
+[SYS] 2026/01/20 - 08:54:54 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:54:54 | 任务进度轮询完成
+[GIN] 2026/01/20 - 08:55:01 | 20260120085501695012899eI7vdyXG | 200 |     943.795µs |             ::1 |     GET /api/status
+
+2026/01/20 08:55:04 [31;1m/app/model/user.go:926 [35;1mrecord not found
+[0m[33m[0.715ms] [34;1m[rows:0][0m SELECT * FROM `users` WHERE role = 100 AND `users`.`deleted_at` IS NULL ORDER BY `users`.`id` LIMIT 1
+[GIN] 2026/01/20 - 08:55:04 | 20260120085504194584525gunM91E4 | 200 |     1.06658ms |             ::1 |     GET /api/status
+[GIN] 2026/01/20 - 08:55:04 | 20260120085504194222580c3R9HVkf | 200 |    2.518262ms |             ::1 |     GET /api/setup
+[SYS] 2026/01/20 - 08:55:09 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:55:09 | 任务进度轮询完成
+[SYS] 2026/01/20 - 08:55:24 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:55:24 | 任务进度轮询完成
+[SYS] 2026/01/20 - 08:55:39 | 正在更新数据看板数据...
+[SYS] 2026/01/20 - 08:55:39 | 保存数据看板数据成功，共保存0条数据
+[SYS] 2026/01/20 - 08:55:39 | syncing options from database
+[SYS] 2026/01/20 - 08:55:39 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:55:39 | 任务进度轮询完成
+[SYS] 2026/01/20 - 08:55:54 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:55:54 | 任务进度轮询完成
+[SYS] 2026/01/20 - 08:56:09 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:56:09 | 任务进度轮询完成
+[SYS] 2026/01/20 - 08:56:24 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:56:24 | 任务进度轮询完成
+[GIN] 2026/01/20 - 08:56:27 | 2026012008562723957585877TSvJzv | 200 |     464.034µs |             ::1 |     GET /api/status
+
+2026/01/20 08:56:28 [31;1m/app/model/user.go:926 [35;1mrecord not found
+[0m[33m[0.322ms] [34;1m[rows:0][0m SELECT * FROM `users` WHERE role = 100 AND `users`.`deleted_at` IS NULL ORDER BY `users`.`id` LIMIT 1
+[GIN] 2026/01/20 - 08:56:28 | 20260120085628354407590S022TBDv | 200 |     346.204µs |             ::1 |     GET /api/status
+[GIN] 2026/01/20 - 08:56:28 | 202601200856283541682784t5vOypW | 200 |     624.746µs |             ::1 |     GET /api/setup
+[SYS] 2026/01/20 - 08:56:39 | syncing options from database
+[SYS] 2026/01/20 - 08:56:39 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:56:39 | 任务进度轮询完成
+[SYS] 2026/01/20 - 08:56:54 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:56:54 | 任务进度轮询完成
+[SYS] 2026/01/20 - 08:57:09 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:57:09 | 任务进度轮询完成
+[SYS] 2026/01/20 - 08:57:24 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:57:24 | 任务进度轮询完成
+[SYS] 2026/01/20 - 08:57:39 | syncing options from database
+[SYS] 2026/01/20 - 08:57:39 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:57:39 | 任务进度轮询完成
+[SYS] 2026/01/20 - 08:57:54 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:57:54 | 任务进度轮询完成
+[SYS] 2026/01/20 - 08:58:09 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:58:09 | 任务进度轮询完成
+[SYS] 2026/01/20 - 08:58:24 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:58:24 | 任务进度轮询完成
+[SYS] 2026/01/20 - 08:58:39 | syncing options from database
+[SYS] 2026/01/20 - 08:58:39 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:58:39 | 任务进度轮询完成
+[GIN] 2026/01/20 - 08:58:44 | 20260120085844895990012wEc2ke6v | 200 |     673.621µs |             ::1 |     GET /api/status
+
+2026/01/20 08:58:46 [31;1m/app/model/user.go:926 [35;1mrecord not found
+[0m[33m[0.329ms] [34;1m[rows:0][0m SELECT * FROM `users` WHERE role = 100 AND `users`.`deleted_at` IS NULL ORDER BY `users`.`id` LIMIT 1
+[GIN] 2026/01/20 - 08:58:46 | 2026012008584627258657ss0A1H5F | 200 |     858.252µs |             ::1 |     GET /api/status
+[GIN] 2026/01/20 - 08:58:46 | 2026012008584625967862C6enjMwb | 200 |    2.742424ms |             ::1 |     GET /api/setup
+[SYS] 2026/01/20 - 08:58:54 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:58:54 | 任务进度轮询完成
+[SYS] 2026/01/20 - 08:59:09 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:59:09 | 任务进度轮询完成
+[SYS] 2026/01/20 - 08:59:24 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:59:24 | 任务进度轮询完成
+[SYS] 2026/01/20 - 08:59:39 | syncing options from database
+[SYS] 2026/01/20 - 08:59:39 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:59:39 | 任务进度轮询完成
+[SYS] 2026/01/20 - 08:59:54 | 任务进度轮询开始
+[SYS] 2026/01/20 - 08:59:54 | 任务进度轮询完成
+[SYS] 2026/01/20 - 09:00:09 | 任务进度轮询开始
+[SYS] 2026/01/20 - 09:00:09 | 任务进度轮询完成
+[GIN] 2026/01/20 - 09:00:20 | 20260120090020391652262M1YEHvO7 | 200 |     434.378µs |             ::1 |     GET /api/status
+[GIN] 2026/01/20 - 09:00:21 | 20260120090021308395628PcSuhYeW | 200 |     456.632µs |             ::1 |     GET /api/status
+
+2026/01/20 09:00:21 [31;1m/app/model/user.go:926 [35;1mrecord not found
+[0m[33m[0.398ms] [34;1m[rows:0][0m SELECT * FROM `users` WHERE role = 100 AND `users`.`deleted_at` IS NULL ORDER BY `users`.`id` LIMIT 1
+[GIN] 2026/01/20 - 09:00:21 | 20260120090021308349394D6ONdRfF | 200 |     714.367µs |             ::1 |     GET /api/setup
+[SYS] 2026/01/20 - 09:00:24 | 任务进度轮询开始
+[SYS] 2026/01/20 - 09:00:24 | 任务进度轮询完成
+[SYS] 2026/01/20 - 09:00:39 | 正在更新数据看板数据...
+[SYS] 2026/01/20 - 09:00:39 | 保存数据看板数据成功，共保存0条数据
+[SYS] 2026/01/20 - 09:00:39 | syncing options from database
+[SYS] 2026/01/20 - 09:00:39 | 任务进度轮询开始
+[SYS] 2026/01/20 - 09:00:39 | 任务进度轮询完成
+[SYS] 2026/01/20 - 09:00:54 | 任务进度轮询开始
+[SYS] 2026/01/20 - 09:00:54 | 任务进度轮询完成
+[SYS] 2026/01/20 - 09:01:09 | 任务进度轮询开始
+[SYS] 2026/01/20 - 09:01:09 | 任务进度轮询完成
+[SYS] 2026/01/20 - 09:01:24 | 任务进度轮询开始
+[SYS] 2026/01/20 - 09:01:24 | 任务进度轮询完成
+[SYS] 2026/01/20 - 09:01:39 | syncing options from database
+[SYS] 2026/01/20 - 09:01:39 | 任务进度轮询开始
+[SYS] 2026/01/20 - 09:01:39 | 任务进度轮询完成
+[SYS] 2026/01/20 - 09:01:54 | 任务进度轮询开始
+[SYS] 2026/01/20 - 09:01:54 | 任务进度轮询完成
+[GIN] 2026/01/20 - 09:02:00 | 202601200902005491277428BYHabtT | 200 |     440.295µs |             ::1 |     GET /api/status
+
+2026/01/20 09:02:01 [31;1m/app/model/user.go:926 [35;1mrecord not found
+[0m[33m[0.431ms] [34;1m[rows:0][0m SELECT * FROM `users` WHERE role = 100 AND `users`.`deleted_at` IS NULL ORDER BY `users`.`id` LIMIT 1
+[GIN] 2026/01/20 - 09:02:01 | 20260120090201666174505zK1F2M7K | 200 |     761.151µs |             ::1 |     GET /api/setup
+[GIN] 2026/01/20 - 09:02:01 | 20260120090201666329795pBZUoh56 | 200 |     508.694µs |             ::1 |     GET /api/status
+[SYS] 2026/01/20 - 09:02:09 | 任务进度轮询开始
+[SYS] 2026/01/20 - 09:02:09 | 任务进度轮询完成
+
+2026/01/20 09:02:16 [31;1m/app/model/user.go:926 [35;1mrecord not found
+[0m[33m[0.507ms] [34;1m[rows:0][0m SELECT * FROM `users` WHERE role = 100 AND `users`.`deleted_at` IS NULL ORDER BY `users`.`id` LIMIT 1
+[GIN] 2026/01/20 - 09:02:16 | 202601200902168955604221UNPZ6oy | 200 |   97.809059ms |             ::1 |    POST /api/setup
+[GIN] 2026/01/20 - 09:02:19 | 20260120090219296276703oms00SNm | 200 |     201.707µs |             ::1 |     GET /api/setup
+[GIN] 2026/01/20 - 09:02:19 | 202601200902192965620769oGl6ABk | 200 |     408.079µs |             ::1 |     GET /api/status
+[GIN] 2026/01/20 - 09:02:20 | 20260120090220454348217b6AZh3I7 | 200 |     386.645µs |             ::1 |     GET /api/status
+[GIN] 2026/01/20 - 09:02:20 | 20260120090220668331604cTwEe8o0 | 200 |     207.267µs |             ::1 |     GET /api/notice
+[GIN] 2026/01/20 - 09:02:20 | 20260120090220668622312GrBdEu5U | 200 |     189.195µs |             ::1 |     GET /api/home_page_content
+[GIN] 2026/01/20 - 09:02:23 | 20260120090223226305844CLrUc9lk | 200 |     378.992µs |             ::1 |     GET /api/status
+
+2026/01/20 09:02:23 [31;1m/app/model/twofa.go:47 [35;1mrecord not found
+[0m[33m[0.266ms] [34;1m[rows:0][0m SELECT * FROM `two_fas` WHERE user_id = 1 AND `two_fas`.`deleted_at` IS NULL ORDER BY `two_fas`.`id` LIMIT 1
+[GIN] 2026/01/20 - 09:02:23 | 20260120090223660530072TDDRBE7A | 200 |   83.890171ms |             ::1 |    POST /api/user/login?turnstile=
+[GIN] 2026/01/20 - 09:02:23 | 20260120090223823669261Im8kxOmJ | 200 |    1.004919ms |             ::1 |     GET /api/user/self
+[SYS] 2026/01/20 - 09:02:24 | 任务进度轮询开始
+[SYS] 2026/01/20 - 09:02:24 | 任务进度轮询完成
+[GIN] 2026/01/20 - 09:02:24 | 20260120090224807773026GAiRXXAe | 200 |     796.674µs |             ::1 |     GET /api/user/self
+[GIN] 2026/01/20 - 09:02:24 | 20260120090224811955047yJ9A2mIN | 200 |     896.943µs |             ::1 |     GET /api/data/?username=&start_timestamp=1768813344&end_timestamp=1768903344&default_time=hour&token_name=
+[GIN] 2026/01/20 - 09:02:25 | 2026012009022523348227gJpBs0Dk | 200 |    1.400276ms |             ::1 |     GET /api/uptime/status
+[SYS] 2026/01/20 - 09:02:39 | syncing options from database
+[SYS] 2026/01/20 - 09:02:39 | 任务进度轮询开始
+[SYS] 2026/01/20 - 09:02:39 | 任务进度轮询完成
+[SYS] 2026/01/20 - 09:02:54 | 任务进度轮询开始
+[SYS] 2026/01/20 - 09:02:54 | 任务进度轮询完成
+[SYS] 2026/01/20 - 09:03:09 | 任务进度轮询开始
+[SYS] 2026/01/20 - 09:03:09 | 任务进度轮询完成

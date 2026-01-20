@@ -42,7 +42,7 @@ const SearchModal = ({
     <Component {...FORM_FIELD_PROPS} {...props} />
   );
 
-  const { start_timestamp, end_timestamp, username } = inputs;
+  const { start_timestamp, end_timestamp, username, token_name } = inputs;
 
   return (
     <Modal
@@ -84,6 +84,15 @@ const SearchModal = ({
           optionList: timeOptions,
           onChange: (value) =>
             handleInputChange(value, 'data_export_default_time'),
+        })}
+
+        {createFormField(Form.Input, {
+          field: 'token_name',
+          label: t('Token 名称'),
+          value: token_name,
+          placeholder: t('可选值'),
+          name: 'token_name',
+          onChange: (value) => handleInputChange(value, 'token_name'),
         })}
 
         {isAdminUser &&
