@@ -25,6 +25,17 @@ type QuotaData struct {
 	Quota     int    `json:"quota" gorm:"default:0"`
 }
 
+// TokenQuotaData is dashboard usage aggregated by the access-token name
+// recorded in the request log. It intentionally reads from LOG_DB instead of
+// quota_data so deleted tokens and historical requests remain visible.
+type TokenQuotaData struct {
+	TokenName string `json:"token_name"`
+	CreatedAt int64  `json:"created_at"`
+	TokenUsed int    `json:"token_used"`
+	Count     int    `json:"count"`
+	Quota     int    `json:"quota"`
+}
+
 type QuotaDataLogParams struct {
 	UserID    int
 	Username  string
@@ -149,13 +160,19 @@ func GetQuotaDataByUsername(username string, startTime int64, endTime int64) (qu
 	return quotaDatas, err
 }
 
-func GetQuotaDataByUserId(userId int, startTime int64, endTime int64) (quotaData []*QuotaData, err error) {
+func GetQuotaDataByUserId(userId int, startTime int64, endTime int64, tokenName string) (quotaData []*QuotaData, err error) {
 	var quotaDatas []*QuotaData
-	// 从quota_data表中查询数据
-	err = DB.Table("quota_data").
-		Select("user_id, username, model_name, created_at, sum(count) as count, sum(quota) as quota, sum(token_used) as token_used").
-		Where("user_id = ? and created_at >= ? and created_at <= ?", userId, startTime, endTime).
-		Group("user_id, username, model_name, created_at").
+	query := DB.Table("quota_data AS q").
+		Select("q.user_id, q.username, q.model_name, q.created_at, sum(q.count) as count, sum(q.quota) as quota, sum(q.token_used) as token_used").
+		Where("q.user_id = ? and q.created_at >= ? and q.created_at <= ?", userId, startTime, endTime)
+	if tokenName != "" {
+		tokenIDs := DB.Model(&Token{}).
+			Select("id").
+			Where("user_id = ? and name = ?", userId, tokenName)
+		query = query.Where("q.token_id IN (?)", tokenIDs)
+	}
+	err = query.
+		Group("q.user_id, q.username, q.model_name, q.created_at").
 		Find(&quotaDatas).Error
 	return quotaDatas, err
 }
@@ -170,14 +187,46 @@ func GetQuotaDataGroupByUser(startTime int64, endTime int64) (quotaData []*Quota
 	return quotaDatas, err
 }
 
-func GetAllQuotaDates(startTime int64, endTime int64, username string) (quotaData []*QuotaData, err error) {
-	if username != "" {
+func GetAllQuotaDates(startTime int64, endTime int64, username string, tokenName string) (quotaData []*QuotaData, err error) {
+	if username != "" && tokenName == "" {
 		return GetQuotaDataByUsername(username, startTime, endTime)
 	}
 	var quotaDatas []*QuotaData
-	// 从quota_data表中查询数据
-	// only select model_name, sum(count) as count, sum(quota) as quota, model_name, created_at from quota_data group by model_name, created_at;
-	//err = DB.Table("quota_data").Where("created_at >= ? and created_at <= ?", startTime, endTime).Find(&quotaDatas).Error
-	err = DB.Table("quota_data").Select("model_name, sum(count) as count, sum(quota) as quota, sum(token_used) as token_used, created_at").Where("created_at >= ? and created_at <= ?", startTime, endTime).Group("model_name, created_at").Find(&quotaDatas).Error
+	query := DB.Table("quota_data AS q").
+		Select("q.model_name, sum(q.count) as count, sum(q.quota) as quota, sum(q.token_used) as token_used, q.created_at").
+		Where("q.created_at >= ? and q.created_at <= ?", startTime, endTime)
+	if username != "" {
+		query = query.Where("q.username = ?", username)
+	}
+	if tokenName != "" {
+		tokenIDs := DB.Model(&Token{}).Select("id").Where("name = ?", tokenName)
+		query = query.Where("q.token_id IN (?)", tokenIDs)
+	}
+	err = query.Group("q.model_name, q.created_at").Find(&quotaDatas).Error
 	return quotaDatas, err
+}
+
+func getQuotaDatesByToken(startTime int64, endTime int64, username string, userId int) (quotaData []*TokenQuotaData, err error) {
+	const hourlyCreatedAt = "created_at - (created_at % 3600)"
+
+	query := LOG_DB.Table("logs").
+		Select("token_name, count(*) as count, sum(quota) as quota, sum(prompt_tokens) + sum(completion_tokens) as token_used, "+hourlyCreatedAt+" as created_at").
+		Where("created_at >= ? and created_at <= ? and type = ?", startTime, endTime, LogTypeConsume)
+	if userId > 0 {
+		query = query.Where("user_id = ?", userId)
+	} else if username != "" {
+		query = query.Where("username = ?", username)
+	}
+
+	var quotaDatas []*TokenQuotaData
+	err = query.Group("token_name, " + hourlyCreatedAt).Find(&quotaDatas).Error
+	return quotaDatas, err
+}
+
+func GetAllQuotaDatesByToken(startTime int64, endTime int64, username string) (quotaData []*TokenQuotaData, err error) {
+	return getQuotaDatesByToken(startTime, endTime, username, 0)
+}
+
+func GetQuotaDatesByTokenUserId(userId int, startTime int64, endTime int64) (quotaData []*TokenQuotaData, err error) {
+	return getQuotaDatesByToken(startTime, endTime, "", userId)
 }

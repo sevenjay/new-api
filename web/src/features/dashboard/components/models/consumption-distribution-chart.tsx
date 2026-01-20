@@ -28,6 +28,7 @@ import {
   CONSUMPTION_DISTRIBUTION_CHART_OPTIONS,
   DEFAULT_TIME_GRANULARITY,
 } from '@/features/dashboard/constants'
+import { useVChartLegendInteractions } from '@/features/dashboard/hooks/use-vchart-legend-interactions'
 import { processChartData } from '@/features/dashboard/lib'
 import type {
   ConsumptionDistributionChartType,
@@ -70,6 +71,7 @@ export function ConsumptionDistributionChart(
     props.defaultChartType ?? 'bar'
   )
   const [themeReady, setThemeReady] = useState(false)
+  const { containerRef, handleChartReady } = useVChartLegendInteractions()
   const themeManagerRef = useRef<
     (typeof import('@visactor/vchart'))['ThemeManager'] | null
   >(null)
@@ -154,7 +156,7 @@ export function ConsumptionDistributionChart(
         </div>
       </div>
 
-      <div className='h-[300px] p-1.5 sm:h-96 sm:p-2'>
+      <div ref={containerRef} className='h-[300px] p-1.5 sm:h-96 sm:p-2'>
         {themeReady && spec && (
           <VChart
             key={chartKey}
@@ -164,6 +166,7 @@ export function ConsumptionDistributionChart(
               background: 'transparent',
             }}
             option={VCHART_OPTION}
+            onReady={handleChartReady}
           />
         )}
       </div>

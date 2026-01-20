@@ -23,6 +23,7 @@ import {
   FileText,
   FlaskConical,
   Key,
+  KeyRound,
   LayoutDashboard,
   ListTodo,
   MessageSquare,
@@ -36,7 +37,7 @@ import {
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
-import { type SidebarData } from '@/components/layout/types'
+import type { SidebarData } from '@/components/layout/types'
 import { ROLE } from '@/lib/roles'
 
 /**
@@ -79,6 +80,11 @@ export function useSidebarData(): SidebarData {
             title: t('Dashboard'),
             url: '/dashboard/models',
             icon: LayoutDashboard,
+          },
+          {
+            title: t('Token Analysis'),
+            url: '/token-analytics',
+            icon: KeyRound,
           },
           {
             title: t('API Keys'),

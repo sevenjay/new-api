@@ -102,6 +102,10 @@ export function SidebarModulesSection({
         title: t('Dashboard'),
         description: t('Aggregated usage metrics and trend charts.'),
       },
+      token_analytics: {
+        title: t('Token Analysis'),
+        description: t('Aggregated usage metrics and trend charts.'),
+      },
       token: {
         title: t('Token management'),
         description: t('Create, revoke, and audit API tokens.'),

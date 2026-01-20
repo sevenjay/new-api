@@ -84,6 +84,11 @@ export function SidebarModulesCard() {
           description: t('System data statistics'),
         },
         {
+          key: 'token_analytics',
+          title: t('Token Analysis'),
+          description: t('Aggregated usage metrics and trend charts.'),
+        },
+        {
           key: 'token',
           title: t('Token Management'),
           description: t('API token management'),

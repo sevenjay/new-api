@@ -172,7 +172,7 @@ export function processChartData(
         yField: 'Usage',
         seriesField: 'Model',
         stack: true,
-        legends: { visible: true, selectMode: 'single' },
+        legends: { visible: true },
       },
       spec_area: {
         type: 'area',
@@ -181,7 +181,7 @@ export function processChartData(
         yField: 'Usage',
         seriesField: 'Model',
         stack: true,
-        legends: { visible: true, selectMode: 'single' },
+        legends: { visible: true },
       },
       spec_model_line: {
         type: 'area',
@@ -189,7 +189,7 @@ export function processChartData(
         xField: 'Time',
         yField: 'Count',
         seriesField: 'Model',
-        legends: { visible: true, selectMode: 'single' },
+        legends: { visible: true },
         title: {
           visible: true,
           text: tt('Call Trend'),
@@ -201,7 +201,7 @@ export function processChartData(
         xField: 'Model',
         yField: 'Count',
         seriesField: 'Model',
-        legends: { visible: true, selectMode: 'single' },
+        legends: { visible: true },
         title: {
           visible: true,
           text: tt('Call Count Ranking'),
@@ -261,16 +261,6 @@ export function processChartData(
   const allModels = Array.from(modelTotalsMap.keys())
   const sortedTimes = Array.from(timeModelMap.keys()).sort()
   const sortedModels = [...allModels].sort()
-  const modelColorDomain = Array.from(new Set([...sortedModels, otherLabel]))
-  const modelColorRange = getDashboardChartColors(modelColorDomain.length)
-  const otherColor = modelColorRange[modelColorDomain.indexOf(otherLabel)]
-  const otherTooltipColor =
-    typeof otherColor === 'string' ? otherColor : '#FF8A00'
-  const modelColor = {
-    type: 'ordinal',
-    domain: modelColorDomain,
-    range: modelColorRange,
-  }
 
   // Pad time points if too few (default 7 points)
   const MAX_TREND_POINTS = MAX_CHART_TREND_POINTS
@@ -294,6 +284,67 @@ export function processChartData(
     return padded
   }
   const chartTimes = fillTimePoints(sortedTimes)
+  const recentTimes = chartTimes.slice(-10)
+  const recentAverageByModel = new Map<
+    string,
+    { quota: number; count: number }
+  >()
+  sortedModels.forEach((model) => {
+    let quota = 0
+    let count = 0
+    recentTimes.forEach((time) => {
+      const stats = timeModelMap.get(time)?.get(model)
+      quota += Number(stats?.quota) || 0
+      count += Number(stats?.count) || 0
+    })
+    recentAverageByModel.set(model, {
+      quota: quota / recentTimes.length,
+      count: count / recentTimes.length,
+    })
+  })
+  const recentQuotaModels = [...sortedModels].sort((a, b) => {
+    const difference =
+      (recentAverageByModel.get(b)?.quota ?? 0) -
+      (recentAverageByModel.get(a)?.quota ?? 0)
+    return difference || a.localeCompare(b)
+  })
+  const recentCountModels = [...sortedModels].sort((a, b) => {
+    const difference =
+      (recentAverageByModel.get(b)?.count ?? 0) -
+      (recentAverageByModel.get(a)?.count ?? 0)
+    return difference || a.localeCompare(b)
+  })
+
+  const stableColorDomain = Array.from(
+    new Set([...sortedModels, otherLabel])
+  )
+  const stableColorRange = getDashboardChartColors(stableColorDomain.length)
+  const colorByModel = new Map(
+    stableColorDomain.map((model, index) => [model, stableColorRange[index]])
+  )
+  const quotaColorDomain = Array.from(
+    new Set([...recentQuotaModels, otherLabel])
+  )
+  const countColorDomain = Array.from(
+    new Set([...recentCountModels, otherLabel])
+  )
+  const quotaModelColor = {
+    type: 'ordinal',
+    domain: quotaColorDomain,
+    range: quotaColorDomain.map(
+      (model) => colorByModel.get(model) ?? '#5B8FF9'
+    ),
+  }
+  const countModelColor = {
+    type: 'ordinal',
+    domain: countColorDomain,
+    range: countColorDomain.map(
+      (model) => colorByModel.get(model) ?? '#5B8FF9'
+    ),
+  }
+  const otherColor = colorByModel.get(otherLabel)
+  const otherTooltipColor =
+    typeof otherColor === 'string' ? otherColor : '#FF8A00'
 
   const totalTimes = Array.from(modelTotalsMap.values()).reduce(
     (sum, x) => sum + (Number(x.count) || 0),
@@ -322,7 +373,7 @@ export function processChartData(
   }> = []
 
   chartTimes.forEach((time) => {
-    let timeData = sortedModels.map((model) => {
+    let timeData = recentQuotaModels.map((model) => {
       const stats = timeModelMap.get(time)?.get(model)
       const rawQuota = Number(stats?.quota) || 0
       const usd = rawQuota ? rawQuota / quotaPerUnit : 0
@@ -338,7 +389,6 @@ export function processChartData(
     })
 
     const timeSum = timeData.reduce((sum, item) => sum + item.rawQuota, 0)
-    timeData.sort((a, b) => b.rawQuota - a.rawQuota)
     timeData = timeData.map((item) => ({ ...item, TimeSum: timeSum }))
     lineValues.push(...timeData)
   })
@@ -361,7 +411,7 @@ export function processChartData(
     const buckets = new Map<string, { rawQuota: number; usage: number }>()
     const modelMap = timeModelMap.get(time)
     let timeSum = 0
-    sortedModels.forEach((model) => {
+    recentQuotaModels.forEach((model) => {
       const stats = modelMap?.get(model)
       const rawQuota = Number(stats?.quota) || 0
       const usd = rawQuota ? rawQuota / quotaPerUnit : 0
@@ -397,6 +447,12 @@ export function processChartData(
   const topTrendModels = rankedTrendModels
     .slice(0, MAX_TREND_MODELS)
     .map((item) => item.Model)
+    .sort((a, b) => {
+      const difference =
+        (recentAverageByModel.get(b)?.count ?? 0) -
+        (recentAverageByModel.get(a)?.count ?? 0)
+      return difference || a.localeCompare(b)
+    })
   const otherTrendModels = rankedTrendModels
     .slice(MAX_TREND_MODELS)
     .map((item) => item.Model)
@@ -473,7 +529,7 @@ export function processChartData(
       },
       legends: { visible: true, orient: 'left' },
       label: { visible: true },
-      color: modelColor,
+      color: countModelColor,
       tooltip: {
         mark: {
           content: [
@@ -495,8 +551,8 @@ export function processChartData(
       yField: 'Usage',
       seriesField: 'Model',
       stack: true,
-      legends: { visible: true, selectMode: 'single' },
-      color: modelColor,
+      legends: { visible: true },
+      color: quotaModelColor,
       bar: {
         state: {
           hover: { stroke: '#000', lineWidth: 1 },
@@ -533,8 +589,8 @@ export function processChartData(
       yField: 'Usage',
       seriesField: 'Model',
       stack: false,
-      legends: { visible: true, selectMode: 'single' },
-      color: modelColor,
+      legends: { visible: true },
+      color: quotaModelColor,
       tooltip: {
         mark: {
           content: [
@@ -581,8 +637,8 @@ export function processChartData(
       yField: 'Count',
       seriesField: 'Model',
       stack: false,
-      legends: { visible: true, selectMode: 'single' },
-      color: modelColor,
+      legends: { visible: true },
+      color: countModelColor,
       title: {
         visible: true,
         text: tt('Call Trend'),
@@ -658,8 +714,8 @@ export function processChartData(
       xField: 'Model',
       yField: 'Count',
       seriesField: 'Model',
-      legends: { visible: true, selectMode: 'single' },
-      color: modelColor,
+      legends: { visible: true },
+      color: countModelColor,
       title: {
         visible: true,
         text: tt('Call Count Ranking'),
