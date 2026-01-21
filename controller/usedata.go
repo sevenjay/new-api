@@ -15,7 +15,17 @@ func GetAllQuotaDates(c *gin.Context) {
 	endTimestamp, _ := strconv.ParseInt(c.Query("end_timestamp"), 10, 64)
 	username := c.Query("username")
 	tokenName := c.Query("token_name")
-	dates, err := model.GetAllQuotaDates(startTimestamp, endTimestamp, username, tokenName)
+	groupBy := c.Query("group_by")
+
+	var dates []*model.QuotaData
+	var err error
+
+	if groupBy == "token" {
+		dates, err = model.GetAllQuotaDatesByToken(startTimestamp, endTimestamp, username)
+	} else {
+		dates, err = model.GetAllQuotaDates(startTimestamp, endTimestamp, username, tokenName)
+	}
+
 	if err != nil {
 		common.ApiError(c, err)
 		return
