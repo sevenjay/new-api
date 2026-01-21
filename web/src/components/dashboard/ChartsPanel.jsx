@@ -34,6 +34,8 @@ const ChartsPanel = ({
   FLEX_CENTER_GAP2,
   hasApiInfoPanel,
   t,
+  onChartClick,
+  title,
 }) => {
   return (
     <Card
@@ -43,7 +45,7 @@ const ChartsPanel = ({
         <div className='flex flex-col lg:flex-row lg:items-center lg:justify-between w-full gap-3'>
           <div className={FLEX_CENTER_GAP2}>
             <PieChart size={16} />
-            {t('模型数据分析')}
+            {title || t('模型数据分析')}
           </div>
           <Tabs
             type='slash'
@@ -61,16 +63,16 @@ const ChartsPanel = ({
     >
       <div className='h-96 p-2'>
         {activeChartTab === '1' && (
-          <VChart spec={spec_line} option={CHART_CONFIG} />
+          <VChart spec={spec_line} option={CHART_CONFIG} onClick={onChartClick} />
         )}
         {activeChartTab === '2' && (
-          <VChart spec={spec_model_line} option={CHART_CONFIG} />
+          <VChart spec={spec_model_line} option={CHART_CONFIG} onClick={onChartClick} />
         )}
         {activeChartTab === '3' && (
-          <VChart spec={spec_pie} option={CHART_CONFIG} />
+          <VChart spec={spec_pie} option={CHART_CONFIG} onClick={onChartClick} />
         )}
         {activeChartTab === '4' && (
-          <VChart spec={spec_rank_bar} option={CHART_CONFIG} />
+          <VChart spec={spec_rank_bar} option={CHART_CONFIG} onClick={onChartClick} />
         )}
       </div>
     </Card>

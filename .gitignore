@@ -27,3 +27,8 @@ data/
 .gomodcache/
 .gocache-temp
 .gopath
+
+.aider*
+.serena
+.kiro
+.opencode

@@ -75,6 +75,7 @@ import {
   CircleUser,
   Package,
   Server,
+  PieChart,
 } from 'lucide-react';
 
 // 获取侧边栏Lucide图标组件
@@ -99,6 +100,8 @@ export function getLucideIcon(key, selected = false) {
       return <MessageSquare {...commonProps} color={iconColor} />;
     case 'token':
       return <Key {...commonProps} color={iconColor} />;
+    case 'token_analytics':
+      return <PieChart {...commonProps} color={iconColor} />;
     case 'log':
       return <BarChart3 {...commonProps} color={iconColor} />;
     case 'midjourney':
