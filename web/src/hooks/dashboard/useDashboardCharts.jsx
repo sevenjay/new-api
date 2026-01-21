@@ -119,7 +119,6 @@ export const useDashboardCharts = (
     stack: true,
     legends: {
       visible: true,
-      selectMode: 'single',
     },
     title: {
       visible: true,
@@ -193,7 +192,6 @@ export const useDashboardCharts = (
     seriesField: 'Model',
     legends: {
       visible: true,
-      selectMode: 'single',
     },
     title: {
       visible: true,
@@ -229,7 +227,6 @@ export const useDashboardCharts = (
     seriesField: 'Model',
     legends: {
       visible: true,
-      selectMode: 'single',
     },
     title: {
       visible: true,

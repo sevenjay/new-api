@@ -37,6 +37,16 @@ const ChartsPanel = ({
   onChartClick,
   title,
 }) => {
+  const handleLegendItemClick = (params) => {
+    const { event, value, component } = params;
+    if (event && event.nativeEvent && event.nativeEvent.button === 1) {
+      event.nativeEvent.preventDefault();
+      if (component && typeof component.setSelected === 'function') {
+        component.setSelected([value]);
+      }
+    }
+  };
+
   return (
     <Card
       {...CARD_PROPS}
@@ -63,16 +73,36 @@ const ChartsPanel = ({
     >
       <div className='h-96 p-2'>
         {activeChartTab === '1' && (
-          <VChart spec={spec_line} option={CHART_CONFIG} onClick={onChartClick} />
+          <VChart
+            spec={spec_line}
+            option={CHART_CONFIG}
+            onClick={onChartClick}
+            onLegendItemClick={handleLegendItemClick}
+          />
         )}
         {activeChartTab === '2' && (
-          <VChart spec={spec_model_line} option={CHART_CONFIG} onClick={onChartClick} />
+          <VChart
+            spec={spec_model_line}
+            option={CHART_CONFIG}
+            onClick={onChartClick}
+            onLegendItemClick={handleLegendItemClick}
+          />
         )}
         {activeChartTab === '3' && (
-          <VChart spec={spec_pie} option={CHART_CONFIG} onClick={onChartClick} />
+          <VChart
+            spec={spec_pie}
+            option={CHART_CONFIG}
+            onClick={onChartClick}
+            onLegendItemClick={handleLegendItemClick}
+          />
         )}
         {activeChartTab === '4' && (
-          <VChart spec={spec_rank_bar} option={CHART_CONFIG} onClick={onChartClick} />
+          <VChart
+            spec={spec_rank_bar}
+            option={CHART_CONFIG}
+            onClick={onChartClick}
+            onLegendItemClick={handleLegendItemClick}
+          />
         )}
       </div>
     </Card>
