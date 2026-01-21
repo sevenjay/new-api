@@ -147,3 +147,17 @@ func GetAllQuotaDates(startTime int64, endTime int64, username string, tokenName
 	err = DB.Table("quota_data").Select("model_name, sum(count) as count, sum(quota) as quota, sum(token_used) as token_used, created_at").Where("created_at >= ? and created_at <= ?", startTime, endTime).Group("model_name, created_at").Find(&quotaDatas).Error
 	return quotaDatas, err
 }
+
+func GetAllQuotaDatesByToken(startTime int64, endTime int64, username string) (quotaData []*QuotaData, err error) {
+	var quotaDatas []*QuotaData
+	// 从logs表中聚合查询数据，按 token_name 分组
+	tx := LOG_DB.Table("logs").
+		Select("token_name as model_name, count(*) as count, sum(quota) as quota, sum(prompt_tokens) + sum(completion_tokens) as token_used, (created_at - (created_at % 3600)) as created_at").
+		Where("created_at >= ? and created_at <= ? and type = ?", startTime, endTime, LogTypeConsume)
+
+	if username != "" {
+		tx = tx.Where("username = ?", username)
+	}
+	err = tx.Group("token_name, created_at - (created_at % 3600)").Find(&quotaDatas).Error
+	return quotaDatas, err
+}
