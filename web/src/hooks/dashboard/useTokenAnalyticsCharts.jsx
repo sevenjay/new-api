@@ -119,7 +119,6 @@ export const useTokenAnalyticsCharts = (
     stack: true,
     legends: {
       visible: true,
-      selectMode: 'single',
     },
     title: {
       visible: true,
@@ -193,7 +192,6 @@ export const useTokenAnalyticsCharts = (
     seriesField: 'Model',
     legends: {
       visible: true,
-      selectMode: 'single',
     },
     title: {
       visible: true,
@@ -229,7 +227,6 @@ export const useTokenAnalyticsCharts = (
     seriesField: 'Model',
     legends: {
       visible: true,
-      selectMode: 'single',
     },
     title: {
       visible: true,
@@ -326,6 +323,26 @@ export const useTokenAnalyticsCharts = (
         dataExportDefaultTime,
       );
 
+      // Calculate Average for Last 10 Time Points for Sorting
+      const last10TimePoints = chartTimePoints.slice(-10);
+      const modelQuotaAverages = {};
+      const modelCountAverages = {};
+
+      Array.from(uniqueModels).forEach((model) => {
+        let totalQuota = 0;
+        let totalCount = 0;
+        last10TimePoints.forEach((time) => {
+          const key = `${time}-${model}`;
+          const aggregated = aggregatedData.get(key);
+          if (aggregated) {
+            totalQuota += aggregated.quota || 0;
+            totalCount += aggregated.count || 0;
+          }
+        });
+        modelQuotaAverages[model] = totalQuota / last10TimePoints.length;
+        modelCountAverages[model] = totalCount / last10TimePoints.length;
+      });
+
       let newLineData = [];
 
       chartTimePoints.forEach((time) => {
@@ -343,12 +360,29 @@ export const useTokenAnalyticsCharts = (
         });
 
         const timeSum = timeData.reduce((sum, item) => sum + item.rawQuota, 0);
-        timeData.sort((a, b) => b.rawQuota - a.rawQuota);
+        // Sort based on Last 10 Average Quota (Descending)
+        timeData.sort((a, b) => {
+          const valA = modelQuotaAverages[a.Model] || 0;
+          const valB = modelQuotaAverages[b.Model] || 0;
+          return valB - valA;
+        });
+
         timeData = timeData.map((item) => ({ ...item, TimeSum: timeSum }));
         newLineData.push(...timeData);
       });
 
-      newLineData.sort((a, b) => a.Time.localeCompare(b.Time));
+      // Sort entire data by Time, but maintain Model order within Time via the push order above
+      // Note: VChart legend order usually depends on the order of series in the data.
+      // Since we push timeData (sorted by rank) sequentially, the first time bucket's order matters most.
+      // However, we need to make sure 'newLineData' is flattened correctly.
+      // The previous sort `newLineData.sort((a, b) => a.Time.localeCompare(b.Time))` could shuffle models if stable sort isn't guaranteed or if times are mixed.
+      // Since we iterate `chartTimePoints` (sorted), `newLineData` is already sorted by Time.
+      // We can just keep it or ensure stable sort.
+      // But let's stick to the previous pattern:
+
+      // newLineData is already sorted by Time (outer loop) and then by Rank (inner sort).
+      // If we re-sort by Time only, it might lose the inner order if the sort is unstable, but usually it's fine.
+      // Let's rely on the construction order.
 
       updateChartSpec(
         setSpecPie,
@@ -369,7 +403,7 @@ export const useTokenAnalyticsCharts = (
       // ===== 模型调用次数折线图 =====
       let modelLineData = [];
       chartTimePoints.forEach((time) => {
-        const timeData = Array.from(uniqueModels).map((model) => {
+        let timeData = Array.from(uniqueModels).map((model) => {
           const key = `${time}-${model}`;
           const aggregated = aggregatedData.get(key);
           return {
@@ -378,9 +412,17 @@ export const useTokenAnalyticsCharts = (
             Count: aggregated?.count || 0,
           };
         });
+
+        // Sort based on Last 10 Average Count (Descending)
+        timeData.sort((a, b) => {
+          const valA = modelCountAverages[a.Model] || 0;
+          const valB = modelCountAverages[b.Model] || 0;
+          return valB - valA;
+        });
+
         modelLineData.push(...timeData);
       });
-      modelLineData.sort((a, b) => a.Time.localeCompare(b.Time));
+      // modelLineData.sort((a, b) => a.Time.localeCompare(b.Time)); // construction is already sorted
 
       // ===== 模型调用次数排行柱状图 =====
       const rankData = Array.from(modelTotals)
