@@ -323,6 +323,26 @@ export const useDashboardCharts = (
         dataExportDefaultTime,
       );
 
+      // Calculate Average for Last 10 Time Points for Sorting
+      const last10TimePoints = chartTimePoints.slice(-10);
+      const modelQuotaAverages = {};
+      const modelCountAverages = {};
+
+      Array.from(uniqueModels).forEach((model) => {
+        let totalQuota = 0;
+        let totalCount = 0;
+        last10TimePoints.forEach((time) => {
+          const key = `${time}-${model}`;
+          const aggregated = aggregatedData.get(key);
+          if (aggregated) {
+            totalQuota += aggregated.quota || 0;
+            totalCount += aggregated.count || 0;
+          }
+        });
+        modelQuotaAverages[model] = totalQuota / last10TimePoints.length;
+        modelCountAverages[model] = totalCount / last10TimePoints.length;
+      });
+
       let newLineData = [];
 
       chartTimePoints.forEach((time) => {
@@ -340,12 +360,17 @@ export const useDashboardCharts = (
         });
 
         const timeSum = timeData.reduce((sum, item) => sum + item.rawQuota, 0);
-        timeData.sort((a, b) => b.rawQuota - a.rawQuota);
+
+        // Sort based on Last 10 Average Quota (Descending)
+        timeData.sort((a, b) => {
+          const valA = modelQuotaAverages[a.Model] || 0;
+          const valB = modelQuotaAverages[b.Model] || 0;
+          return valB - valA;
+        });
+
         timeData = timeData.map((item) => ({ ...item, TimeSum: timeSum }));
         newLineData.push(...timeData);
       });
-
-      newLineData.sort((a, b) => a.Time.localeCompare(b.Time));
 
       updateChartSpec(
         setSpecPie,
@@ -366,7 +391,7 @@ export const useDashboardCharts = (
       // ===== 模型调用次数折线图 =====
       let modelLineData = [];
       chartTimePoints.forEach((time) => {
-        const timeData = Array.from(uniqueModels).map((model) => {
+        let timeData = Array.from(uniqueModels).map((model) => {
           const key = `${time}-${model}`;
           const aggregated = aggregatedData.get(key);
           return {
@@ -375,9 +400,16 @@ export const useDashboardCharts = (
             Count: aggregated?.count || 0,
           };
         });
+
+        // Sort based on Last 10 Average Count (Descending)
+        timeData.sort((a, b) => {
+          const valA = modelCountAverages[a.Model] || 0;
+          const valB = modelCountAverages[b.Model] || 0;
+          return valB - valA;
+        });
+
         modelLineData.push(...timeData);
       });
-      modelLineData.sort((a, b) => a.Time.localeCompare(b.Time));
 
       // ===== 模型调用次数排行柱状图 =====
       const rankData = Array.from(modelTotals)

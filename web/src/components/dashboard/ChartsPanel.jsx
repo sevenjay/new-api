@@ -39,9 +39,15 @@ const ChartsPanel = ({
 }) => {
   const handleLegendItemClick = (params) => {
     const { event, value, component } = params;
+    // Check for middle click (button 1)
     if (event && event.nativeEvent && event.nativeEvent.button === 1) {
       event.nativeEvent.preventDefault();
+      event.nativeEvent.stopPropagation();
+      event.nativeEvent.stopImmediatePropagation &&
+        event.nativeEvent.stopImmediatePropagation();
+
       if (component && typeof component.setSelected === 'function') {
+        // Solo the clicked item
         component.setSelected([value]);
       }
     }
