@@ -34,6 +34,7 @@ const routerMap = {
   home: '/',
   channel: '/console/channel',
   token: '/console/token',
+  token_analytics: '/console/token-analytics',
   redemption: '/console/redemption',
   topup: '/console/topup',
   user: '/console/user',
@@ -77,6 +78,11 @@ const SiderBar = ({ onNavigate = () => {} }) => {
           localStorage.getItem('enable_data_export') === 'true'
             ? ''
             : 'tableHiddle',
+      },
+      {
+        text: t('令牌分析'),
+        itemKey: 'token_analytics',
+        to: '/token_analytics',
       },
       {
         text: t('令牌管理'),
