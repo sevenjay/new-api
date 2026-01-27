@@ -40,7 +40,6 @@ import {
   showSuccess,
   showError,
 } from '../../../../helpers';
-import CodeViewer from '../../../playground/CodeViewer';
 import { StatusContext } from '../../../../context/Status';
 import { UserContext } from '../../../../context/User';
 import { useUserPermissions } from '../../../../hooks/common/useUserPermissions';
@@ -520,44 +519,39 @@ const NotificationSettings = ({
                       showClear
                     />
 
-                    <Form.Slot label={t('Webhook请求结构说明')}>
-                      <div>
-                        <div style={{ height: '200px', marginBottom: '12px' }}>
-                          <CodeViewer
-                            content={{
-                              type: 'quota_exceed',
-                              title: '额度预警通知',
-                              content:
-                                '您的额度即将用尽，当前剩余额度为 {{value}}',
-                              values: ['$0.99'],
-                              timestamp: 1739950503,
-                            }}
-                            title='webhook'
-                            language='json'
-                          />
-                        </div>
-                        <div className='text-xs text-gray-500 leading-relaxed'>
+                    <Form.TextArea
+                      field='webhookTemplate'
+                      label={t('Webhook请求结构说明')}
+                      placeholder={
+                        '{\n  "type": "{{type}}",\n  "title": "{{title}}",\n  "content": "{{content}}",\n  "values": ["{{value}}"],\n  "timestamp": {{timestamp}}\n}'
+                      }
+                      autosize={{ minRows: 6, maxRows: 12 }}
+                      onChange={(val) =>
+                        handleFormChange('webhookTemplate', val)
+                      }
+                      extraText={
+                        <div className='text-xs text-gray-500 leading-relaxed mt-1'>
+                          <div>{t('留空则使用默认结构。支持变量：')}</div>
                           <div>
-                            <strong>type:</strong>{' '}
-                            {t('通知类型 (quota_exceed: 额度预警)')}{' '}
+                            <strong>{'{{type}}'}:</strong>{' '}
+                            {t('通知类型 (quota_exceed: 额度预警)')}
                           </div>
                           <div>
-                            <strong>title:</strong> {t('通知标题')}
+                            <strong>{'{{title}}'}:</strong> {t('通知标题')}
                           </div>
                           <div>
-                            <strong>content:</strong>{' '}
-                            {t('通知内容，支持 {{value}} 变量占位符')}
+                            <strong>{'{{content}}'}:</strong> {t('通知内容')}
                           </div>
                           <div>
-                            <strong>values:</strong>{' '}
-                            {t('按顺序替换content中的变量占位符')}
+                            <strong>{'{{value}}'}:</strong>{' '}
+                            {t('剩余额度数值（例如 $0.01）')}
                           </div>
                           <div>
-                            <strong>timestamp:</strong> {t('Unix时间戳')}
+                            <strong>{'{{timestamp}}'}:</strong> {t('Unix时间戳')}
                           </div>
                         </div>
-                      </div>
-                    </Form.Slot>
+                      }
+                    />
                   </>
                 )}
 

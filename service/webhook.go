@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/QuantumNous/new-api/common"
@@ -32,26 +33,50 @@ func generateSignature(secret string, payload []byte) string {
 }
 
 // SendWebhookNotify 发送 webhook 通知
-func SendWebhookNotify(webhookURL string, secret string, data dto.Notify) error {
+func SendWebhookNotify(webhookURL string, secret string, webhookTemplate string, data dto.Notify) error {
 	// 处理占位符
 	content := data.Content
 	for _, value := range data.Values {
 		content = fmt.Sprintf(content, value)
 	}
 
-	// 构建 webhook 负载
-	payload := WebhookPayload{
-		Type:      data.Type,
-		Title:     data.Title,
-		Content:   content,
-		Values:    data.Values,
-		Timestamp: time.Now().Unix(),
-	}
+	var payloadBytes []byte
+	var err error
 
-	// 序列化负载
-	payloadBytes, err := json.Marshal(payload)
-	if err != nil {
-		return fmt.Errorf("failed to marshal webhook payload: %v", err)
+	if webhookTemplate != "" {
+		// 使用用户定义的模板
+		jsonString := func(s string) string {
+			b, _ := json.Marshal(s)
+			return string(b[1 : len(b)-1])
+		}
+
+		tmpl := webhookTemplate
+		tmpl = strings.ReplaceAll(tmpl, "{{type}}", jsonString(data.Type))
+		tmpl = strings.ReplaceAll(tmpl, "{{title}}", jsonString(data.Title))
+		tmpl = strings.ReplaceAll(tmpl, "{{content}}", jsonString(content))
+		tmpl = strings.ReplaceAll(tmpl, "{{timestamp}}", fmt.Sprintf("%d", time.Now().Unix()))
+		if len(data.Values) > 0 {
+			tmpl = strings.ReplaceAll(tmpl, "{{value}}", jsonString(fmt.Sprintf("%v", data.Values[0])))
+		} else {
+			tmpl = strings.ReplaceAll(tmpl, "{{value}}", "")
+		}
+
+		payloadBytes = []byte(tmpl)
+	} else {
+		// 使用默认格式
+		payload := WebhookPayload{
+			Type:      data.Type,
+			Title:     data.Title,
+			Content:   content,
+			Values:    data.Values,
+			Timestamp: time.Now().Unix(),
+		}
+
+		// 序列化负载
+		payloadBytes, err = json.Marshal(payload)
+		if err != nil {
+			return fmt.Errorf("failed to marshal webhook payload: %v", err)
+		}
 	}
 
 	// 创建 HTTP 请求
