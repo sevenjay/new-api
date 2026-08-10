@@ -47,6 +47,7 @@ export function normalizeUserSettings(
     notification_email: parsed.notification_email ?? '',
     webhook_url: parsed.webhook_url ?? '',
     webhook_secret: parsed.webhook_secret ?? '',
+    webhook_template: parsed.webhook_template ?? '',
     bark_url: parsed.bark_url ?? '',
     gotify_url: parsed.gotify_url ?? '',
     gotify_token: parsed.gotify_token ?? '',

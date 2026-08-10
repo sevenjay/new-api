@@ -106,6 +106,8 @@ export interface UserSettings {
   webhook_url?: string
   /** Webhook secret */
   webhook_secret?: string
+  /** Custom JSON payload template for webhook notifications */
+  webhook_template?: string
   /** Notification email */
   notification_email?: string
   /** Bark URL */
@@ -159,6 +161,7 @@ export interface UpdateUserSettingsRequest {
   quota_warning_enabled?: boolean
   webhook_url?: string
   webhook_secret?: string
+  webhook_template?: string
   notification_email?: string
   bark_url?: string
   gotify_url?: string

@@ -1322,6 +1322,7 @@ type UpdateUserSettingRequest struct {
 	QuotaWarningEnabled              *bool   `json:"quota_warning_enabled,omitempty"`
 	WebhookUrl                       string  `json:"webhook_url,omitempty"`
 	WebhookSecret                    string  `json:"webhook_secret,omitempty"`
+	WebhookTemplate                  string  `json:"webhook_template,omitempty"`
 	NotificationEmail                string  `json:"notification_email,omitempty"`
 	BarkUrl                          string  `json:"bark_url,omitempty"`
 	GotifyUrl                        string  `json:"gotify_url,omitempty"`
@@ -1361,6 +1362,11 @@ func UpdateUserSetting(c *gin.Context) {
 		// 验证URL格式
 		if _, err := url.ParseRequestURI(req.WebhookUrl); err != nil {
 			common.ApiErrorT(c, "Invalid Webhook URL")
+			return
+		}
+		req.WebhookTemplate = strings.TrimSpace(req.WebhookTemplate)
+		if err := service.ValidateWebhookTemplate(req.WebhookTemplate); err != nil {
+			common.ApiErrorMsg(c, fmt.Sprintf("invalid webhook template: %v", err))
 			return
 		}
 	}
@@ -1440,12 +1446,13 @@ func UpdateUserSetting(c *gin.Context) {
 	}
 
 	// 只保留所选通知方式的配置，其他方式的配置清空
-	settings.WebhookUrl, settings.WebhookSecret = "", ""
+	settings.WebhookUrl, settings.WebhookSecret, settings.WebhookTemplate = "", "", ""
 	settings.NotificationEmail = ""
 	settings.BarkUrl = ""
 	settings.GotifyUrl, settings.GotifyToken, settings.GotifyPriority = "", "", 0
 	switch req.QuotaWarningType {
 	case dto.NotifyTypeWebhook:
+		settings.WebhookTemplate = req.WebhookTemplate
 		settings.WebhookUrl = req.WebhookUrl
 		settings.WebhookSecret = req.WebhookSecret
 	case dto.NotifyTypeEmail:

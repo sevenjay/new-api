@@ -26,6 +26,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
+import { Textarea } from '@/components/ui/textarea'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import {
   SettingsControlChildren,
@@ -52,6 +53,14 @@ const NOTIFICATION_ICONS: Record<NotifyType, typeof Mail> = {
   bark: Bell,
   gotify: Server,
 }
+
+const WEBHOOK_TEMPLATE_EXAMPLE = `{
+  "type": "{{type}}",
+  "title": "{{title}}",
+  "content": "{{content}}",
+  "values": ["{{value}}"],
+  "timestamp": {{timestamp}}
+}`
 
 // ============================================================================
 // Settings Tab Component
@@ -217,6 +226,24 @@ export function NotificationTab({
                   placeholder={t('Enter secret key')}
                 />
               </div>
+          <div className='space-y-1.5'>
+            <Label htmlFor='webhookTemplate'>{t('Webhook Template')}</Label>
+            <Textarea
+              id='webhookTemplate'
+              className='min-h-40 font-mono text-xs'
+              value={settings.webhook_template}
+              onChange={(e) => updateField('webhook_template', e.target.value)}
+              placeholder={WEBHOOK_TEMPLATE_EXAMPLE}
+              spellCheck={false}
+            />
+            <p className='text-muted-foreground text-xs'>
+              {t('Leave blank to use the default JSON payload.')}
+            </p>
+            <p className='text-muted-foreground text-xs'>
+              {t('Template variables:')} {'{{type}}'}, {'{{title}}'},{' '}
+              {'{{content}}'}, {'{{value}}'}, {'{{timestamp}}'}
+            </p>
+          </div>
             </>
           )}
 
