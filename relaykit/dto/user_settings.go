@@ -5,6 +5,7 @@ type UserSetting struct {
 	QuotaWarningThreshold            float64 `json:"quota_warning_threshold,omitempty"`              // QuotaWarningThreshold 额度预警阈值
 	WebhookUrl                       string  `json:"webhook_url,omitempty"`                          // WebhookUrl webhook地址
 	WebhookSecret                    string  `json:"webhook_secret,omitempty"`                       // WebhookSecret webhook密钥
+	WebhookTemplate                  string  `json:"webhook_template,omitempty"`                     // WebhookTemplate Webhook请求结构模板
 	NotificationEmail                string  `json:"notification_email,omitempty"`                   // NotificationEmail 通知邮箱地址
 	BarkUrl                          string  `json:"bark_url,omitempty"`                             // BarkUrl Bark推送URL
 	GotifyUrl                        string  `json:"gotify_url,omitempty"`                           // GotifyUrl Gotify服务器地址

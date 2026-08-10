@@ -26,6 +26,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
+import { Textarea } from '@/components/ui/textarea'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { ROLE } from '@/lib/roles'
 
@@ -47,6 +48,14 @@ const NOTIFICATION_ICONS: Record<NotifyType, typeof Mail> = {
 const NOTIFICATION_VALUES = new Set<NotifyType>(
   NOTIFICATION_METHODS.map((method) => method.value)
 )
+
+const WEBHOOK_TEMPLATE_EXAMPLE = `{
+  "type": "{{type}}",
+  "title": "{{title}}",
+  "content": "{{content}}",
+  "values": ["{{value}}"],
+  "timestamp": {{timestamp}}
+}`
 
 function normalizeNotifyType(value: unknown): NotifyType {
   return typeof value === 'string' &&
@@ -74,6 +83,7 @@ export function NotificationTab({ profile, onUpdate }: NotificationTabProps) {
     notification_email: '',
     webhook_url: '',
     webhook_secret: '',
+    webhook_template: '',
     bark_url: '',
     gotify_url: '',
     gotify_token: '',
@@ -101,6 +111,7 @@ export function NotificationTab({ profile, onUpdate }: NotificationTabProps) {
         notification_email: parsed.notification_email ?? '',
         webhook_url: parsed.webhook_url ?? '',
         webhook_secret: parsed.webhook_secret ?? '',
+        webhook_template: parsed.webhook_template ?? '',
         bark_url: parsed.bark_url ?? '',
         gotify_url: parsed.gotify_url ?? '',
         gotify_token: parsed.gotify_token ?? '',
@@ -225,6 +236,24 @@ export function NotificationTab({ profile, onUpdate }: NotificationTabProps) {
               onChange={(e) => updateField('webhook_secret', e.target.value)}
               placeholder={t('Enter secret key')}
             />
+          </div>
+          <div className='space-y-1.5'>
+            <Label htmlFor='webhookTemplate'>{t('Webhook Template')}</Label>
+            <Textarea
+              id='webhookTemplate'
+              className='min-h-40 font-mono text-xs'
+              value={settings.webhook_template}
+              onChange={(e) => updateField('webhook_template', e.target.value)}
+              placeholder={WEBHOOK_TEMPLATE_EXAMPLE}
+              spellCheck={false}
+            />
+            <p className='text-muted-foreground text-xs'>
+              {t('Leave blank to use the default JSON payload.')}
+            </p>
+            <p className='text-muted-foreground text-xs'>
+              {t('Template variables:')} {'{{type}}'}, {'{{title}}'},{' '}
+              {'{{content}}'}, {'{{value}}'}, {'{{timestamp}}'}
+            </p>
           </div>
         </>
       )}
