@@ -7,6 +7,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/QuantumNous/new-api/common"
@@ -23,6 +24,16 @@ type WebhookPayload struct {
 	Timestamp int64         `json:"timestamp"`
 }
 
+const MaxWebhookTemplateBytes = 16 * 1024
+
+var webhookTemplatePlaceholders = []string{
+	"{{type}}",
+	"{{title}}",
+	"{{content}}",
+	"{{value}}",
+	"{{timestamp}}",
+}
+
 // generateSignature 生成 webhook 签名
 func generateSignature(secret string, payload []byte) string {
 	h := hmac.New(sha256.New, []byte(secret))
@@ -30,27 +41,105 @@ func generateSignature(secret string, payload []byte) string {
 	return hex.EncodeToString(h.Sum(nil))
 }
 
-// SendWebhookNotify 发送 webhook 通知
-func SendWebhookNotify(webhookURL string, secret string, data dto.Notify) error {
-	// 处理占位符
+func webhookContent(data dto.Notify) string {
 	content := data.Content
 	for _, value := range data.Values {
-		content = fmt.Sprintf(content, value)
+		content = strings.Replace(content, dto.ContentValueParam, fmt.Sprintf("%v", value), 1)
 	}
+	return content
+}
 
-	// 构建 webhook 负载
-	payload := WebhookPayload{
-		Type:      data.Type,
-		Title:     data.Title,
-		Content:   content,
-		Values:    data.Values,
-		Timestamp: time.Now().Unix(),
-	}
-
-	// 序列化负载
-	payloadBytes, err := common.Marshal(payload)
+func marshalWebhookTemplateString(value string) (string, error) {
+	encoded, err := common.Marshal(value)
 	if err != nil {
-		return fmt.Errorf("failed to marshal webhook payload: %v", err)
+		return "", err
+	}
+	if len(encoded) < 2 {
+		return "", fmt.Errorf("failed to encode webhook template value")
+	}
+	return string(encoded[1 : len(encoded)-1]), nil
+}
+
+func renderWebhookPayload(webhookTemplate string, data dto.Notify, timestamp int64) ([]byte, error) {
+	content := webhookContent(data)
+	if strings.TrimSpace(webhookTemplate) == "" {
+		return common.Marshal(WebhookPayload{
+			Type:      data.Type,
+			Title:     data.Title,
+			Content:   content,
+			Values:    data.Values,
+			Timestamp: timestamp,
+		})
+	}
+	if len(webhookTemplate) > MaxWebhookTemplateBytes {
+		return nil, fmt.Errorf("template exceeds %d bytes", MaxWebhookTemplateBytes)
+	}
+
+	unsupportedCheck := webhookTemplate
+	for _, placeholder := range webhookTemplatePlaceholders {
+		unsupportedCheck = strings.ReplaceAll(unsupportedCheck, placeholder, "")
+	}
+	if strings.Contains(unsupportedCheck, "{{") || strings.Contains(unsupportedCheck, "}}") {
+		return nil, fmt.Errorf("template contains an unsupported placeholder")
+	}
+
+	typeValue, err := marshalWebhookTemplateString(data.Type)
+	if err != nil {
+		return nil, fmt.Errorf("failed to encode webhook type: %w", err)
+	}
+	titleValue, err := marshalWebhookTemplateString(data.Title)
+	if err != nil {
+		return nil, fmt.Errorf("failed to encode webhook title: %w", err)
+	}
+	contentValue, err := marshalWebhookTemplateString(content)
+	if err != nil {
+		return nil, fmt.Errorf("failed to encode webhook content: %w", err)
+	}
+	firstValue := ""
+	if len(data.Values) > 0 {
+		firstValue = fmt.Sprintf("%v", data.Values[0])
+	}
+	valueValue, err := marshalWebhookTemplateString(firstValue)
+	if err != nil {
+		return nil, fmt.Errorf("failed to encode webhook value: %w", err)
+	}
+
+	rendered := strings.NewReplacer(
+		"{{type}}", typeValue,
+		"{{title}}", titleValue,
+		"{{content}}", contentValue,
+		"{{value}}", valueValue,
+		"{{timestamp}}", fmt.Sprintf("%d", timestamp),
+	).Replace(webhookTemplate)
+	payloadBytes := []byte(rendered)
+	var payload map[string]any
+	if err := common.Unmarshal(payloadBytes, &payload); err != nil {
+		return nil, fmt.Errorf("template must render to a valid JSON object: %w", err)
+	}
+	if payload == nil {
+		return nil, fmt.Errorf("template must render to a JSON object")
+	}
+	return payloadBytes, nil
+}
+
+func ValidateWebhookTemplate(webhookTemplate string) error {
+	if strings.TrimSpace(webhookTemplate) == "" {
+		return nil
+	}
+	_, err := renderWebhookPayload(webhookTemplate, dto.Notify{
+		Type:    dto.NotifyTypeQuotaExceed,
+		Title:   "Quota warning",
+		Content: "Remaining quota: {{value}}",
+		Values:  []interface{}{"1.00"},
+	}, time.Now().Unix())
+	return err
+}
+
+// SendWebhookNotify 发送 webhook 通知
+func SendWebhookNotify(webhookURL string, secret string, webhookTemplate string, data dto.Notify) error {
+	payloadBytes, err := renderWebhookPayload(webhookTemplate, data, time.Now().Unix())
+	if err != nil {
+		return fmt.Errorf("failed to render webhook payload: %w", err)
 	}
 
 	// 创建 HTTP 请求
