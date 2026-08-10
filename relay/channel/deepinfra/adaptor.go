@@ -113,11 +113,7 @@ func (a *Adaptor) ConvertOpenAIResponsesRequest(c *gin.Context, info *relaycommo
 }
 
 func (a *Adaptor) DoRequest(c *gin.Context, info *relaycommon.RelayInfo, requestBody io.Reader) (any, error) {
-	if info.RelayMode == constant.RelayModeRerank {
-		return channel.DoApiRequest(a, c, info, requestBody)
-	}
-	adaptor := openai.Adaptor{}
-	return adaptor.DoRequest(c, info, requestBody)
+	return channel.DoApiRequest(a, c, info, requestBody)
 }
 
 func (a *Adaptor) ConvertRerankRequest(c *gin.Context, relayMode int, request dto.RerankRequest) (any, error) {
