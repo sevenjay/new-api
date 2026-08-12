@@ -25,6 +25,17 @@ type QuotaData struct {
 	Quota     int    `json:"quota" gorm:"default:0"`
 }
 
+// TokenQuotaData is dashboard usage aggregated by the access-token name
+// recorded in the request log. It intentionally reads from LOG_DB instead of
+// quota_data so deleted tokens and historical requests remain visible.
+type TokenQuotaData struct {
+	TokenName string `json:"token_name"`
+	CreatedAt int64  `json:"created_at"`
+	TokenUsed int    `json:"token_used"`
+	Count     int    `json:"count"`
+	Quota     int    `json:"quota"`
+}
+
 type QuotaDataLogParams struct {
 	UserID    int
 	Username  string
@@ -193,4 +204,29 @@ func GetAllQuotaDates(startTime int64, endTime int64, username string, tokenName
 	}
 	err = query.Group("q.model_name, q.created_at").Find(&quotaDatas).Error
 	return quotaDatas, err
+}
+
+func getQuotaDatesByToken(startTime int64, endTime int64, username string, userId int) (quotaData []*TokenQuotaData, err error) {
+	const hourlyCreatedAt = "created_at - (created_at % 3600)"
+
+	query := LOG_DB.Table("logs").
+		Select("token_name, count(*) as count, sum(quota) as quota, sum(prompt_tokens) + sum(completion_tokens) as token_used, "+hourlyCreatedAt+" as created_at").
+		Where("created_at >= ? and created_at <= ? and type = ?", startTime, endTime, LogTypeConsume)
+	if userId > 0 {
+		query = query.Where("user_id = ?", userId)
+	} else if username != "" {
+		query = query.Where("username = ?", username)
+	}
+
+	var quotaDatas []*TokenQuotaData
+	err = query.Group("token_name, " + hourlyCreatedAt).Find(&quotaDatas).Error
+	return quotaDatas, err
+}
+
+func GetAllQuotaDatesByToken(startTime int64, endTime int64, username string) (quotaData []*TokenQuotaData, err error) {
+	return getQuotaDatesByToken(startTime, endTime, username, 0)
+}
+
+func GetQuotaDatesByTokenUserId(userId int, startTime int64, endTime int64) (quotaData []*TokenQuotaData, err error) {
+	return getQuotaDatesByToken(startTime, endTime, "", userId)
 }

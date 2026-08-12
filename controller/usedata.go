@@ -33,6 +33,19 @@ func GetAllQuotaDates(c *gin.Context) {
 	endTimestamp, _ := strconv.ParseInt(c.Query("end_timestamp"), 10, 64)
 	username := c.Query("username")
 	tokenName := c.Query("token_name")
+	if c.Query("group_by") == "token" {
+		dates, err := model.GetAllQuotaDatesByToken(startTimestamp, endTimestamp, username)
+		if err != nil {
+			common.ApiError(c, err)
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"message": "",
+			"data":    dates,
+		})
+		return
+	}
 	dates, err := model.GetAllQuotaDates(startTimestamp, endTimestamp, username, tokenName)
 	if err != nil {
 		common.ApiError(c, err)
@@ -71,6 +84,19 @@ func GetUserQuotaDates(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"success": false,
 			"message": "时间跨度不能超过 1 个月",
+		})
+		return
+	}
+	if c.Query("group_by") == "token" {
+		dates, err := model.GetQuotaDatesByTokenUserId(userId, startTimestamp, endTimestamp)
+		if err != nil {
+			common.ApiError(c, err)
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"message": "",
+			"data":    dates,
 		})
 		return
 	}
