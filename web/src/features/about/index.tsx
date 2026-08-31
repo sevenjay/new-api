@@ -23,11 +23,24 @@ import { useTranslation } from 'react-i18next'
 import { PublicLayout } from '@/components/layout'
 import { RichContent } from '@/components/rich-content'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useStatus } from '@/hooks/use-status'
 import { isHttpUrl, isLikelyHtml } from '@/lib/content-format'
 
 import { getAboutContent } from './api'
 
-function EmptyAboutState() {
+function AboutVersion(props: { version?: string }) {
+  const { t } = useTranslation()
+
+  if (!props.version) return null
+
+  return (
+    <div className='text-muted-foreground text-sm'>
+      {t('Current version')}: {props.version}
+    </div>
+  )
+}
+
+function EmptyAboutState(props: { version?: string }) {
   const { t } = useTranslation()
   const currentYear = new Date().getFullYear()
 
@@ -46,6 +59,7 @@ function EmptyAboutState() {
           </p>
         </div>
         <div className='space-y-4 text-sm'>
+          <AboutVersion version={props.version} />
           <p>
             {t('New API Project Repository:')}{' '}
             <a
@@ -114,6 +128,7 @@ function EmptyAboutState() {
 
 export function About() {
   const { t } = useTranslation()
+  const { status } = useStatus()
   const { data, isLoading } = useQuery({
     queryKey: ['about-content'],
     queryFn: getAboutContent,
@@ -123,6 +138,7 @@ export function About() {
   const hasContent = rawContent.length > 0
   const isUrl = hasContent && isHttpUrl(rawContent)
   const contentIsHtml = hasContent && isLikelyHtml(rawContent)
+  const version = status?.version
 
   if (isLoading) {
     return (
@@ -140,7 +156,7 @@ export function About() {
   if (!hasContent) {
     return (
       <PublicLayout>
-        <EmptyAboutState />
+        <EmptyAboutState version={version} />
       </PublicLayout>
     )
   }
@@ -148,12 +164,17 @@ export function About() {
   if (isUrl) {
     return (
       <PublicLayout showMainContainer={false}>
-        <iframe
-          src={rawContent}
-          className='h-[calc(100vh-3.5rem)] w-full border-0'
-          title={t('About')}
-          sandbox='allow-forms allow-popups allow-popups-to-escape-sandbox allow-scripts'
-        />
+        <div className='pt-14'>
+          <div className='container px-4 py-3'>
+            <AboutVersion version={version} />
+          </div>
+          <iframe
+            src={rawContent}
+            className='h-[calc(100vh-6.5rem)] w-full border-0'
+            title={t('About')}
+            sandbox='allow-forms allow-popups allow-popups-to-escape-sandbox allow-scripts'
+          />
+        </div>
       </PublicLayout>
     )
   }
@@ -161,12 +182,17 @@ export function About() {
   if (contentIsHtml) {
     return (
       <PublicLayout showMainContainer={false}>
-        <RichContent
-          mode='html'
-          htmlVariant='isolated'
-          content={rawContent}
-          className='prose-neutral dark:prose-invert max-w-none'
-        />
+        <div className='pt-14'>
+          <div className='container px-4 py-3'>
+            <AboutVersion version={version} />
+          </div>
+          <RichContent
+            mode='html'
+            htmlVariant='isolated'
+            content={rawContent}
+            className='prose-neutral dark:prose-invert max-w-none'
+          />
+        </div>
       </PublicLayout>
     )
   }
@@ -174,6 +200,7 @@ export function About() {
   return (
     <PublicLayout>
       <div className='mx-auto max-w-6xl px-4 py-8'>
+        <AboutVersion version={version} />
         <RichContent
           mode='markdown'
           content={rawContent}

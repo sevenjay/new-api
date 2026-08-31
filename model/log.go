@@ -610,9 +610,11 @@ func GetUserLogs(userId int, logType int, startTimestamp int64, endTimestamp int
 }
 
 type Stat struct {
-	Quota int `json:"quota"`
-	Rpm   int `json:"rpm"`
-	Tpm   int `json:"tpm"`
+	Quota          int  `json:"quota"`
+	Rpm            int  `json:"rpm"`
+	Tpm            int  `json:"tpm"`
+	RemainQuota    int  `json:"remain_quota"`
+	UnlimitedQuota bool `json:"unlimited_quota"`
 }
 
 func SumUsedQuota(logType int, startTimestamp int64, endTimestamp int64, modelName string, username string, tokenName string, channel int, group string) (stat Stat, err error) {
@@ -659,13 +661,25 @@ func SumUsedQuota(logType int, startTimestamp int64, endTimestamp int64, modelNa
 	rpmTpmQuery = rpmTpmQuery.Where("created_at >= ?", time.Now().Add(-60*time.Second).Unix())
 
 	// 执行查询
-	if err := tx.Scan(&stat).Error; err != nil {
+	if err = tx.Scan(&stat).Error; err != nil {
 		common.SysError("failed to query log stat: " + err.Error())
 		return stat, errors.New("查询统计数据失败")
 	}
-	if err := rpmTpmQuery.Scan(&stat).Error; err != nil {
+	if err = rpmTpmQuery.Scan(&stat).Error; err != nil {
 		common.SysError("failed to query rpm/tpm stat: " + err.Error())
 		return stat, errors.New("查询统计数据失败")
+	}
+
+	if tokenName != "" {
+		token, tokenErr := GetTokenByName(tokenName)
+		if tokenErr != nil {
+			if !errors.Is(tokenErr, gorm.ErrRecordNotFound) {
+				common.SysError("failed to get token by name: " + tokenErr.Error())
+			}
+		} else if token != nil {
+			stat.RemainQuota = token.RemainQuota
+			stat.UnlimitedQuota = token.UnlimitedQuota
+		}
 	}
 
 	return stat, nil

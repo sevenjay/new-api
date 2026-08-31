@@ -17,19 +17,17 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 import { useQuery } from '@tanstack/react-query'
-import { getRouteApi } from '@tanstack/react-router'
+import { useSearch } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 
 import { Skeleton } from '@/components/ui/skeleton'
 import { formatLogQuota } from '@/lib/format'
 import { cn } from '@/lib/utils'
 
-import { getLogStats, getUserLogStats } from '../api'
+import { getLogStats, getPublicLogStats, getUserLogStats } from '../api'
 import { DEFAULT_LOG_STATS } from '../constants'
 import { buildApiParams } from '../lib/utils'
 import { useLogsViewScope, useUsageLogsContext } from './usage-logs-provider'
-
-const route = getRouteApi('/_authenticated/usage-logs/$section')
 
 function StatBadge(props: {
   label: string
@@ -49,12 +47,12 @@ function StatBadge(props: {
 
 export function CommonLogsStats() {
   const { t } = useTranslation()
-  const { isAdminView: isAdmin } = useLogsViewScope()
-  const searchParams = route.useSearch()
+  const { isAdminView: isAdmin, publicView } = useLogsViewScope()
+  const searchParams = useSearch({ strict: false })
   const { sensitiveVisible } = useUsageLogsContext()
 
   const { data: stats, isLoading } = useQuery({
-    queryKey: ['usage-logs-stats', isAdmin, searchParams],
+    queryKey: ['usage-logs-stats', isAdmin, publicView, searchParams],
     queryFn: async () => {
       const params = buildApiParams({
         page: 1,
@@ -64,9 +62,11 @@ export function CommonLogsStats() {
         isAdmin,
       })
 
-      const result = isAdmin
-        ? await getLogStats(params)
-        : await getUserLogStats(params)
+      const result = publicView
+        ? await getPublicLogStats(params)
+        : isAdmin
+          ? await getLogStats(params)
+          : await getUserLogStats(params)
 
       return result.success
         ? result.data || DEFAULT_LOG_STATS
@@ -92,6 +92,19 @@ export function CommonLogsStats() {
         value={sensitiveVisible ? formatLogQuota(stats?.quota || 0) : '••••'}
         accent='bg-sky-500/70'
       />
+      {publicView && (
+        <StatBadge
+          label={t('Remaining Quota')}
+          value={
+            stats?.unlimited_quota
+              ? t('Unlimited')
+              : sensitiveVisible
+                ? formatLogQuota(stats?.remain_quota || 0)
+                : '••••'
+          }
+          accent='bg-emerald-500/70'
+        />
+      )}
       <StatBadge
         label={t('RPM')}
         value={stats?.rpm || 0}

@@ -28,6 +28,7 @@ import {
   DEFAULT_TIME_GRANULARITY,
   MODEL_ANALYTICS_CHART_OPTIONS,
 } from '@/features/dashboard/constants'
+import { useVChartLegendInteractions } from '@/features/dashboard/hooks/use-vchart-legend-interactions'
 import { processChartData } from '@/features/dashboard/lib'
 import type {
   ModelAnalyticsChartTab,
@@ -68,6 +69,7 @@ export function ModelCharts(props: ModelChartsProps) {
     props.defaultChartTab ?? 'trend'
   )
   const [themeReady, setThemeReady] = useState(false)
+  const { containerRef, handleChartReady } = useVChartLegendInteractions()
   const themeManagerRef = useRef<
     (typeof import('@visactor/vchart'))['ThemeManager'] | null
   >(null)
@@ -151,7 +153,7 @@ export function ModelCharts(props: ModelChartsProps) {
         </div>
       </div>
 
-      <div className='h-[300px] p-1.5 sm:h-96 sm:p-2'>
+      <div ref={containerRef} className='h-[300px] p-1.5 sm:h-96 sm:p-2'>
         {themeReady && spec && (
           <VChart
             key={chartKey}
@@ -161,6 +163,7 @@ export function ModelCharts(props: ModelChartsProps) {
               background: 'transparent',
             }}
             option={VCHART_OPTION}
+            onReady={handleChartReady}
           />
         )}
       </div>

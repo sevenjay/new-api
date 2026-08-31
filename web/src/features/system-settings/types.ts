@@ -225,6 +225,7 @@ export type ModelSettings = {
   AutoGroups: string
   MaxTokenAutoGroups: number
   DefaultUseAutoGroup: boolean
+  SkipTokenGroupUsableCheckEnabled: boolean
   'group_ratio_setting.group_special_usable_group': string
   RetryTimes: number
   ChannelDisableThreshold: string
@@ -283,6 +284,7 @@ export type BillingSettings = {
   AutoGroups: string
   MaxTokenAutoGroups: number
   DefaultUseAutoGroup: boolean
+  SkipTokenGroupUsableCheckEnabled: boolean
   'group_ratio_setting.group_special_usable_group': string
   PayAddress: string
   EpayId: string

@@ -156,7 +156,7 @@ func validateLikePattern(input string) error {
 
 const searchHardLimit = 100
 
-func SearchUserTokens(userId int, keyword string, token string, offset int, limit int) (tokens []*Token, total int64, err error) {
+func SearchUserTokens(userId int, keyword string, token string, group string, offset int, limit int) (tokens []*Token, total int64, err error) {
 	// model 层强制截断
 	if limit <= 0 || limit > searchHardLimit {
 		limit = searchHardLimit
@@ -199,6 +199,9 @@ func SearchUserTokens(userId int, keyword string, token string, offset int, limi
 			return nil, 0, err
 		}
 		baseQuery = baseQuery.Where(commonKeyCol+" LIKE ? ESCAPE '!'", tokenPattern)
+	}
+	if group != "" && group != "null" {
+		baseQuery = baseQuery.Where(commonGroupCol+" = ?", group)
 	}
 
 	// 先查匹配总数（用于分页，受 maxTokens 上限保护，避免全表 COUNT）
@@ -306,6 +309,26 @@ func GetTokenByKey(key string, fromDB bool) (token *Token, err error) {
 	fromDB = true
 	err = DB.Where(commonKeyCol+" = ?", key).First(&token).Error
 	return token, err
+}
+
+func GetTokenByName(name string) (*Token, error) {
+	if name == "" {
+		return nil, errors.New("name 为空！")
+	}
+	var token Token
+	err := DB.Where("name = ?", name).First(&token).Error
+	if err != nil {
+		return nil, err
+	}
+	// Update Redis cache asynchronously on successful DB read
+	if common.RedisEnabled {
+		gopool.Go(func() {
+			if errCache := cacheSetToken(token); errCache != nil {
+				common.SysError("failed to update token cache by name: " + errCache.Error())
+			}
+		})
+	}
+	return &token, nil
 }
 
 func (token *Token) Insert() error {

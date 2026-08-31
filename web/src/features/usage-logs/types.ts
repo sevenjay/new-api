@@ -253,6 +253,8 @@ export interface LogStatistics {
   quota: number
   rpm: number
   tpm: number
+  remain_quota?: number
+  unlimited_quota?: boolean
 }
 
 // ============================================================================
@@ -392,6 +394,7 @@ export interface GetTaskLogsParams {
 export interface FetchLogsConfig {
   logCategory: LogCategory
   isAdmin: boolean
+  isPublic?: boolean
   page: number
   pageSize: number
   searchParams: Record<string, unknown>
