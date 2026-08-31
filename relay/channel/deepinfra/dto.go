@@ -31,6 +31,7 @@ type SFImageRequest struct {
 }
 
 type DeepInfraRerankRequest struct {
-	Query     string   `json:"query"`
+	Query     *string  `json:"query,omitempty"`
+	Queries   []string `json:"queries,omitempty"`
 	Documents []string `json:"documents"`
 }

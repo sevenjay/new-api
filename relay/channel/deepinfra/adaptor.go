@@ -121,10 +121,15 @@ func (a *Adaptor) ConvertRerankRequest(c *gin.Context, relayMode int, request dt
 	for _, document := range request.Documents {
 		documents = append(documents, fmt.Sprintf("%v", document))
 	}
-	return DeepInfraRerankRequest{
-		Query:     request.Query,
+	deepinfraRequest := DeepInfraRerankRequest{
 		Documents: documents,
-	}, nil
+	}
+	if strings.Contains(strings.ToLower(request.Model), "qwen3-reranker") {
+		deepinfraRequest.Queries = []string{request.Query}
+	} else {
+		deepinfraRequest.Query = &request.Query
+	}
+	return deepinfraRequest, nil
 }
 
 func (a *Adaptor) ConvertEmbeddingRequest(c *gin.Context, info *relaycommon.RelayInfo, request dto.EmbeddingRequest) (any, error) {

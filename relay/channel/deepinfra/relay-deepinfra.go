@@ -6,6 +6,7 @@ import (
 	"sort"
 
 	"github.com/QuantumNous/new-api/common"
+	"github.com/QuantumNous/new-api/logger"
 	relaycommon "github.com/QuantumNous/new-api/relay/common"
 	"github.com/QuantumNous/new-api/relaykit/dto"
 	"github.com/QuantumNous/new-api/relaykit/types"
@@ -20,6 +21,7 @@ func deepinfraRerankHandler(c *gin.Context, info *relaycommon.RelayInfo, resp *h
 		return nil, types.NewOpenAIError(err, types.ErrorCodeReadResponseBodyFailed, http.StatusInternalServerError)
 	}
 	service.CloseResponseBodyGracefully(resp)
+	logger.LogDebug(c, "DeepInfra rerank response body: %s", responseBody)
 	var deepinfraResp DeepinfraRerankResponse
 	err = common.Unmarshal(responseBody, &deepinfraResp)
 	if err != nil {
