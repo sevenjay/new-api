@@ -210,3 +210,66 @@ func TestDeepSeekBuiltinBilling(t *testing.T) {
 		assert.Equal(t, 375, result.ActualQuotaAfterGroup, model)
 	}
 }
+
+func TestJevBuiltinBilling(t *testing.T) {
+	settings := config.GlobalConfig.Get("billing_setting").(*billing_setting.BillingSetting)
+	originalSetting := *settings
+	originalRatios := ratio_setting.ModelRatio2JSONString()
+	originalPrices := ratio_setting.ModelPrice2JSONString()
+	t.Cleanup(func() {
+		*settings = originalSetting
+		require.NoError(t, ratio_setting.UpdateModelRatioByJSONString(originalRatios))
+		require.NoError(t, ratio_setting.UpdateModelPriceByJSONString(originalPrices))
+	})
+
+	cases := []struct {
+		name, model, mode, expression, ratios, prices string
+		wantMode, wantExpression                      string
+	}{
+		{name: "latest defaults to token expression", model: "jev-latest", wantMode: billing_setting.BillingModeTieredExpr, wantExpression: `tier("standard", p * 0.042)`},
+		{name: "versioned model defaults to token expression", model: "jev-1.13.0", wantMode: billing_setting.BillingModeTieredExpr, wantExpression: `tier("standard", p * 0.042)`},
+		{name: "preview defaults to token expression", model: "jev-preview", wantMode: billing_setting.BillingModeTieredExpr, wantExpression: `tier("standard", p * 0.042)`},
+		{name: "administrator expression overrides default", model: "jev-latest", expression: `tier("custom", p * 2 + c * 4)`, wantMode: billing_setting.BillingModeTieredExpr, wantExpression: `tier("custom", p * 2 + c * 4)`},
+		{name: "explicit ratio mode overrides default", model: "jev-latest", mode: billing_setting.BillingModeRatio, wantMode: billing_setting.BillingModeRatio},
+		{name: "configured free ratio overrides default", model: "jev-latest", ratios: `{"jev-latest":0}`, wantMode: billing_setting.BillingModeRatio},
+		{name: "configured per-call price overrides default", model: "jev-latest", prices: `{"jev-latest":0.1}`, wantMode: billing_setting.BillingModeRatio},
+		{name: "explicit expression mode overrides legacy ratio", model: "jev-latest", mode: billing_setting.BillingModeTieredExpr, ratios: `{"jev-latest":1}`, wantMode: billing_setting.BillingModeTieredExpr, wantExpression: `tier("standard", p * 0.042)`},
+		{name: "unrelated models keep ratio billing", model: "custom-model", wantMode: billing_setting.BillingModeRatio},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			*settings = billing_setting.BillingSetting{BillingMode: map[string]string{}, BillingExpr: map[string]string{}}
+			if tc.mode != "" {
+				settings.BillingMode[tc.model] = tc.mode
+			}
+			if tc.expression != "" {
+				settings.BillingExpr[tc.model] = tc.expression
+			}
+			ratios, prices := tc.ratios, tc.prices
+			if ratios == "" {
+				ratios = `{}`
+			}
+			if prices == "" {
+				prices = `{}`
+			}
+			require.NoError(t, ratio_setting.UpdateModelRatioByJSONString(ratios))
+			require.NoError(t, ratio_setting.UpdateModelPriceByJSONString(prices))
+
+			assert.Equal(t, tc.wantMode, billing_setting.GetBillingMode(tc.model))
+			expression, found := billing_setting.GetBillingExpr(tc.model)
+			assert.Equal(t, tc.wantExpression, expression)
+			assert.Equal(t, tc.wantExpression != "", found)
+
+			// Pricing sync must advertise the same effective defaults as relay billing.
+			syncData := billing_setting.GetPricingSyncData(nil)
+			syncedExpressions, ok := syncData[billing_setting.BillingExprField].(map[string]string)
+			require.True(t, ok)
+			assert.Equal(t, tc.wantExpression, syncedExpressions[tc.model])
+			if tc.wantMode == billing_setting.BillingModeTieredExpr {
+				syncedModes, ok := syncData[billing_setting.BillingModeField].(map[string]string)
+				require.True(t, ok)
+				assert.Equal(t, tc.wantMode, syncedModes[tc.model])
+			}
+		})
+	}
+}

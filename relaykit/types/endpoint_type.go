@@ -14,6 +14,7 @@ const (
 	EndpointTypeDeepSeekToolsFetch    EndpointType = "deepseek-tools-fetch"
 	EndpointTypeAnthropic             EndpointType = "anthropic"
 	EndpointTypeGemini                EndpointType = "gemini"
+	EndpointTypeDecisions             EndpointType = "typesafe-decisions"
 	EndpointTypeJinaRerank            EndpointType = "jina-rerank"
 	EndpointTypeImageGeneration       EndpointType = "image-generation"
 	EndpointTypeEmbeddings            EndpointType = "embeddings"

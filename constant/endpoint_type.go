@@ -15,6 +15,7 @@ const (
 	EndpointTypeDeepSeekToolsFetch    = types.EndpointTypeDeepSeekToolsFetch
 	EndpointTypeAnthropic             = types.EndpointTypeAnthropic
 	EndpointTypeGemini                = types.EndpointTypeGemini
+	EndpointTypeDecisions             = types.EndpointTypeDecisions
 	EndpointTypeJinaRerank            = types.EndpointTypeJinaRerank
 	EndpointTypeImageGeneration       = types.EndpointTypeImageGeneration
 	EndpointTypeEmbeddings            = types.EndpointTypeEmbeddings

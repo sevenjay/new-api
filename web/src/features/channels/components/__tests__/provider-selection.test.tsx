@@ -865,3 +865,24 @@ test('an empty plugin filter reports that no plugins can be bound', async () => 
   expect(screen.getByText('No plugins available for binding')).toBeVisible()
   expect(screen.queryByRole('option')).not.toBeInTheDocument()
 })
+
+test('an administrator can find and select the TypeSafe Jev provider', async () => {
+  const user = userEvent.setup()
+  const select = vi.fn()
+  render(
+    <ChannelProviderPicker
+      isCreating
+      currentProvider={{ kind: 'builtin', type: 1 }}
+      plugins={[]}
+      canBindPlugin
+      loading={false}
+      failed={false}
+      disabled={false}
+      onRetry={vi.fn()}
+      onSelect={select}
+    />
+  )
+  await user.type(screen.getByRole('combobox'), 'TypeSafe')
+  await user.click(screen.getByRole('option', { name: /TypeSafe.*#64$/ }))
+  expect(select).toHaveBeenCalledWith({ kind: 'builtin', type: 64 })
+})

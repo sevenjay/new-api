@@ -36,4 +36,8 @@ var builtinBillingExpr = map[string]string{
 	// requests each, the same pricing page. The calls carry no tokens.
 	constant.DeepSeekSearchModel: `tier("request", fixed(0.00075))`,
 	constant.DeepSeekFetchModel:  `tier("request", fixed(0.00075))`,
+	// https://docs.typesafe.ai/models (2026-09-18): input $0.042/M tokens, output free.
+	"jev-1.13.0":  `tier("standard", p * 0.042)`,
+	"jev-latest":  `tier("standard", p * 0.042)`,
+	"jev-preview": `tier("standard", p * 0.042)`,
 }

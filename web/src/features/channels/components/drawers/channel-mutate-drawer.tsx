@@ -146,6 +146,7 @@ import {
   CHANNEL_TYPE_TASK_PLUGIN,
   CHANNEL_TYPE_VLLM,
   CHANNEL_TYPE_SGLANG,
+  CHANNEL_TYPE_TYPESAFE,
   CHANNEL_TYPE_WARNINGS,
   ERROR_MESSAGES,
   FIELD_PASSTHROUGH_TYPES,
@@ -4211,6 +4212,13 @@ export function ChannelMutateDrawer({
                         )}
                       </FormDescription>
                     )}
+                    {currentType === CHANNEL_TYPE_TYPESAFE && (
+                      <FormDescription>
+                        {t(
+                          'TypeSafe: https://api.typesafe.ai; OpenRouter: https://openrouter.ai/api'
+                        )}
+                      </FormDescription>
+                    )}
                     {currentType === CHANNEL_TYPE_TASK_PLUGIN &&
                       !boundTaskPlugin?.baseUrl && (
                         <FormDescription>
@@ -4759,6 +4767,31 @@ export function ChannelMutateDrawer({
                 {ollamaOpenAIChatFields}
                 {thinkingFields}
                 {passthroughFields}
+                {currentType === CHANNEL_TYPE_TYPESAFE && (
+                  <FormField
+                    control={form.control}
+                    name='decisions_upstream_path'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t('Decisions upstream path')}</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            value={field.value || ''}
+                            disabled={sensitiveLocked}
+                            placeholder='/v1/systemone'
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          {t(
+                            'Override the upstream decisions endpoint path. Leave empty for TypeSafe (/v1/systemone). Set /alpha/decisions when the base URL is OpenRouter (https://openrouter.ai/api).'
+                          )}
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
                 {systemPromptFields}
                 {systemPromptOverrideFields}
               </fieldset>
