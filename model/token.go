@@ -312,13 +312,12 @@ func GetTokenByName(name string) (*Token, error) {
 	if err != nil {
 		return nil, err
 	}
-	// Update Redis cache asynchronously on successful DB read
+	// Match key lookups: initialize cold caches without overwriting live quota
+	// or publishing a database snapshot while a mutation fence is active.
 	if common.RedisEnabled {
-		gopool.Go(func() {
-			if errCache := cacheSetToken(token); errCache != nil {
-				common.SysError("failed to update token cache by name: " + errCache.Error())
-			}
-		})
+		if _, cacheErr := cacheInitToken(token); cacheErr != nil {
+			common.SysError("failed to init token cache by name: " + cacheErr.Error())
+		}
 	}
 	return &token, nil
 }
