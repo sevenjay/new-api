@@ -88,6 +88,7 @@ import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard'
 import { useIsMobile } from '@/hooks/use-mobile'
 
 import { updateChannel } from '../../api'
+import { CHANNEL_TYPE_TYPESAFE } from '../../constants'
 import {
   channelsQueryKeys,
   formatResponseTime,
@@ -191,6 +192,7 @@ const endpointTypeOptions: Array<{ value: string; label: string }> = [
     value: 'gemini',
     label: 'Gemini (/v1beta/models/{model}:generateContent)',
   },
+  { value: 'typesafe-decisions', label: 'TypeSafe Jev (/v1/decisions)' },
   { value: 'jina-rerank', label: 'Jina Rerank (/v1/rerank)' },
   {
     value: 'image-generation',
@@ -207,6 +209,7 @@ const STREAM_INCOMPATIBLE_ENDPOINTS = new Set([
   'embeddings',
   'image-generation',
   'jina-rerank',
+  'typesafe-decisions',
   'openai-response-compact',
 ])
 
@@ -320,6 +323,9 @@ export function ChannelTestDialog({
   )
 }
 
+/**
+ * Manages single and batch channel probes, restricting streaming for incompatible endpoints.
+ */
 function ChannelTestDialogContent({
   open,
   onOpenChange,
@@ -415,7 +421,9 @@ function ChannelTestDialogContent({
     setPagination({ pageIndex: 0, pageSize: 30 })
   }, [])
 
-  const streamDisabled = STREAM_INCOMPATIBLE_ENDPOINTS.has(endpointType)
+  const streamDisabled =
+    STREAM_INCOMPATIBLE_ENDPOINTS.has(endpointType) ||
+    (endpointType === 'auto' && currentRow.type === CHANNEL_TYPE_TYPESAFE)
   const effectiveStreamTest = !streamDisabled && isStreamTest
 
   const handleEndpointTypeChange = useCallback((value: string | null) => {

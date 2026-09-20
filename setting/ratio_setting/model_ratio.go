@@ -392,6 +392,12 @@ func GetModelRatio(name string) (float64, bool, string) {
 	return ratio, true, name
 }
 
+// HasConfiguredModelRatio checks for an explicit ratio without the self-use fallback.
+func HasConfiguredModelRatio(name string) bool {
+	_, ok := modelRatioMap.Get(FormatMatchingModelName(name))
+	return ok
+}
+
 func DefaultModelRatio2JSONString() string {
 	jsonBytes, err := common.Marshal(defaultModelRatio)
 	if err != nil {

@@ -45,6 +45,7 @@ import (
 	taskvertex "github.com/QuantumNous/new-api/relay/channel/task/vertex"
 	taskVidu "github.com/QuantumNous/new-api/relay/channel/task/vidu"
 	"github.com/QuantumNous/new-api/relay/channel/tencent"
+	"github.com/QuantumNous/new-api/relay/channel/typesafe"
 	"github.com/QuantumNous/new-api/relay/channel/vertex"
 	"github.com/QuantumNous/new-api/relay/channel/volcengine"
 	"github.com/QuantumNous/new-api/relay/channel/xai"
@@ -54,6 +55,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// GetAdaptor creates the provider adaptor for an API type, or returns nil if unsupported.
 func GetAdaptor(apiType int) channel.Adaptor {
 	switch apiType {
 	case constant.APITypeAli:
@@ -130,6 +132,8 @@ func GetAdaptor(apiType int) channel.Adaptor {
 		return &advancedcustom.Adaptor{}
 	case constant.APITypeSub2API:
 		return &sub2api.Adaptor{}
+	case constant.APITypeTypeSafe:
+		return &typesafe.Adaptor{}
 	case constant.APITypeNewAPI:
 		return &newapi.Adaptor{}
 	}

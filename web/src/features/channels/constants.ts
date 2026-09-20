@@ -23,6 +23,8 @@ For commercial licensing, please contact support@quantumnous.com
 
 export const CHANNEL_TYPE_NEW_API = 60
 
+export const CHANNEL_TYPE_TYPESAFE = 64
+
 export const CHANNEL_TYPES = {
   0: 'Unknown',
   1: 'OpenAI',
@@ -82,6 +84,7 @@ export const CHANNEL_TYPES = {
   58: 'Advanced Custom',
   59: 'Sub2API',
   60: 'New API',
+  64: 'TypeSafe',
 } as const
 
 const CHANNEL_TYPE_DISPLAY_ORDER: number[] = [
@@ -390,7 +393,7 @@ export const FIELD_DESCRIPTIONS = {
 
 export const MODEL_FETCHABLE_TYPES = new Set([
   1, 4, 14, 17, 20, 23, 24, 25, 26, 27, 31, 32, 34, 35, 40, 42, 43, 47, 48, 57,
-  58, 59, 60,
+  58, 59, 60, CHANNEL_TYPE_TYPESAFE,
 ])
 
 export const FIELD_PASSTHROUGH_TYPES = new Set([

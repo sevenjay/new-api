@@ -141,6 +141,7 @@ import {
   CLAUDE_FIELD_PASSTHROUGH_TYPES,
   CHANNEL_STATUS_LABELS,
   CHANNEL_TYPE_OPTIONS,
+  CHANNEL_TYPE_TYPESAFE,
   CHANNEL_TYPE_WARNINGS,
   ERROR_MESSAGES,
   FIELD_PASSTHROUGH_TYPES,
@@ -2016,6 +2017,13 @@ export function ChannelMutateDrawer({
                                       />
                                     </div>
                                   </FormControl>
+                                  {currentType === CHANNEL_TYPE_TYPESAFE && (
+                                    <FormDescription>
+                                      {t(
+                                        'Evaluate structured decisions with TypeSafe Jev'
+                                      )}
+                                    </FormDescription>
+                                  )}
                                   {sensitiveLocked && (
                                     <FormDescription>
                                       {t(
@@ -2793,6 +2801,13 @@ export function ChannelMutateDrawer({
                                         'Custom API base URL. For official channels, New API has built-in addresses. Only fill this for third-party proxy sites or special endpoints. Do not add /v1 or trailing slash.'
                                       )}
                                     </FormDescription>
+                                    {currentType === CHANNEL_TYPE_TYPESAFE && (
+                                      <FormDescription>
+                                        {t(
+                                          'TypeSafe: https://api.typesafe.ai; OpenRouter: https://openrouter.ai/api'
+                                        )}
+                                      </FormDescription>
+                                    )}
                                     <FormMessage />
                                   </FormItem>
                                 )}
@@ -4320,6 +4335,34 @@ export function ChannelMutateDrawer({
                                 )
                               }}
                             />
+
+                            {currentType === CHANNEL_TYPE_TYPESAFE && (
+                              <FormField
+                                control={form.control}
+                                name='decisions_upstream_path'
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>
+                                      {t('Decisions upstream path')}
+                                    </FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        {...field}
+                                        value={field.value || ''}
+                                        disabled={sensitiveLocked}
+                                        placeholder='/v1/systemone'
+                                      />
+                                    </FormControl>
+                                    <FormDescription>
+                                      {t(
+                                        'Override the upstream decisions endpoint path. Leave empty for TypeSafe (/v1/systemone). Set /alpha/decisions when the base URL is OpenRouter (https://openrouter.ai/api).'
+                                      )}
+                                    </FormDescription>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            )}
 
                             <FormField
                               control={form.control}

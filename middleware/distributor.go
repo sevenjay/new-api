@@ -218,6 +218,19 @@ func getModelFromJSONBody(c *gin.Context) (*ModelRequest, error) {
 	if !gjson.ValidBytes(requestBody) {
 		return nil, errors.New("invalid JSON request body")
 	}
+	if c.Request.URL.Path == "/v1/decisions" {
+		// Routing and typed decisions decoding must agree on a single model.
+		modelFields := 0
+		gjson.ParseBytes(requestBody).ForEach(func(key, _ gjson.Result) bool {
+			if key.String() == "model" {
+				modelFields++
+			}
+			return modelFields < 2
+		})
+		if modelFields > 1 {
+			return nil, errors.New("model must be provided once")
+		}
+	}
 
 	values := gjson.GetManyBytes(requestBody, "model", "group")
 	model, err := getJSONStringValue(values[0], "model")

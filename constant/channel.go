@@ -59,6 +59,7 @@ const (
 	ChannelTypeAdvancedCustom = 58
 	ChannelTypeSub2API        = 59
 	ChannelTypeNewAPI         = 60
+	ChannelTypeTypeSafe       = 64
 	ChannelTypeDummy          // this one is only for count, do not add any channel after this
 
 )
@@ -125,6 +126,10 @@ var ChannelBaseURLs = []string{
 	"",                                          //58
 	"",                                          //59
 	"",                                          //60
+	"",                                          //61 reserved
+	"",                                          //62 reserved
+	"",                                          //63 reserved
+	"https://api.typesafe.ai",                   //64
 }
 
 var ChannelTypeNames = map[int]string{
@@ -186,6 +191,7 @@ var ChannelTypeNames = map[int]string{
 	ChannelTypeAdvancedCustom: "Advanced Custom",
 	ChannelTypeSub2API:        "Sub2API",
 	ChannelTypeNewAPI:         "New API",
+	ChannelTypeTypeSafe:       "TypeSafe",
 }
 
 func GetChannelTypeName(channelType int) string {
