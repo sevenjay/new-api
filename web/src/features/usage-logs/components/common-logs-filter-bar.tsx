@@ -494,7 +494,7 @@ export function CommonLogsFilterBar<TData>(
       compactMobile
       stats={statsBar}
       actionStart={sensitiveToggle}
-      actionEnd={<ExportLogsDialog />}
+      actionEnd={!publicView && <ExportLogsDialog />}
       primaryFilters={
         <>
           {dateRangeFilter}

@@ -46,14 +46,14 @@ const pointerCaptureDescriptor = Object.getOwnPropertyDescriptor(
   'setPointerCapture'
 )
 
-function FilterFixture() {
+function FilterFixture(props: { publicView?: boolean }) {
   const table = useReactTable({
     data: [],
     columns: [],
     getCoreRowModel: getCoreRowModel(),
   })
   return (
-    <UsageLogsProvider>
+    <UsageLogsProvider publicView={props.publicView}>
       <CommonLogsFilterBar table={table} />
     </UsageLogsProvider>
   )
@@ -86,8 +86,14 @@ async function renderFilter(
     component: FilterFixture,
     validateSearch: (search: Record<string, unknown>) => search,
   })
+  const publicLogs = createRoute({
+    getParentRoute: () => root,
+    path: '/public_logs',
+    component: () => <FilterFixture publicView />,
+    validateSearch: (search: Record<string, unknown>) => search,
+  })
   const router = createRouter({
-    routeTree: root.addChildren([auth.addChildren([logs])]),
+    routeTree: root.addChildren([auth.addChildren([logs]), publicLogs]),
     history: createMemoryHistory({ initialEntries: [initialEntry] }),
   })
   const client = new QueryClient({
@@ -106,6 +112,15 @@ async function renderFilter(
   await screen.findByRole('combobox', { name: 'Group' })
   return router
 }
+
+it('renders anonymous public log filters without the authenticated export dialog', async () => {
+  useAuthStore.getState().auth.reset()
+  await renderFilter('/public_logs')
+
+  expect(screen.getByRole('combobox', { name: 'Group' })).toBeVisible()
+  expect(screen.queryByRole('button', { name: 'Export' })).not.toBeInTheDocument()
+  expect(api.get).not.toHaveBeenCalledWith('/api/user/self/groups')
+})
 
 afterEach(() => {
   cleanup()
